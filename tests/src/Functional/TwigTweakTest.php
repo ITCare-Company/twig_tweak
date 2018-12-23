@@ -231,7 +231,7 @@ class TwigTweakTest extends BrowserTestBase {
     self::assertEquals($link, trim($this->xpath($xpath)[0]->getHtml()));
 
     // Test status messages.
-    $xpath = '//div[@class = "tt-messages"]/div[contains(@class, "messages--status") and contains(., "Hello world!")]';
+    $xpath = '//div[@class = "tt-messages"]//div[contains(@class, "messages--status") and contains(., "Hello world!")]';
     $this->assertByXpath($xpath);
 
     // Test breadcrumb.
