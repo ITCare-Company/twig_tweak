@@ -508,6 +508,12 @@ class TwigExtension extends \Twig_Extension {
    * @see \Drupal\Core\Url::fromUserInput()
    */
   public function drupalUrl($user_input, array $options = [], $check_access = FALSE) {
+    if (isset($options['langcode'])) {
+      $lang_manager = \Drupal::languageManager();
+      if ($language = $lang_manager->getLanguage($options['langcode'])) {
+        $options['language'] = $language;
+      }
+    }
     if (!in_array($user_input[0], ['/', '#', '?'])) {
       $user_input = '/' . $user_input;
     }
