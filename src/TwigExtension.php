@@ -69,6 +69,7 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFilter('truncate', [$this, 'truncate']),
       new \Twig_SimpleFilter('view', [$this, 'view']),
       new \Twig_SimpleFilter('with', [$this, 'with']),
+      new \Twig_SimpleFilter('children', [$this, 'children']),
     ];
     // PHP filter should be enabled in settings.php file.
     if (Settings::get('twig_tweak_enable_php_filter')) {
@@ -715,6 +716,22 @@ class TwigExtension extends \Twig_Extension {
   public function with(array $build, $key, $element) {
     $build[$key] = $element;
     return $build;
+  }
+
+  /**
+   * Filters out the children of a render array, optionally sorted by weight.
+   *
+   * @param array $build
+   *   The render array whose children are to be filtered.
+   * @param bool $sort
+   *   Boolean to indicate whether the children should be sorted by weight.
+   *
+   * @return array
+   *   The element's children.
+   */
+  public function children(array $build, $sort = FALSE) {
+    $keys = Element::children($build, $sort);
+    return array_intersect_key($build, array_flip($keys));
   }
 
   /**

@@ -270,6 +270,10 @@ class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-with"]/b[text() = "Example"]';
     $this->assertByXpath($xpath);
 
+    // Test 'children'.
+    $xpath = '//div[@class = "tt-children" and text() = "doremi"]';
+    $this->assertByXpath($xpath);
+
     // Test node view.
     $xpath = '//div[@class = "tt-node-view"]/article[contains(@class, "node--view-mode-default")]/h2[a/span[text() = "Beta"]]';
     $xpath .= '/following-sibling::footer[//h4[text() = "Member for"]]';
