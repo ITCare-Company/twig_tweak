@@ -509,8 +509,8 @@ class TwigExtension extends \Twig_Extension {
    */
   public function drupalUrl($user_input, array $options = [], $check_access = FALSE) {
     if (isset($options['langcode'])) {
-      $lang_manager = \Drupal::languageManager();
-      if ($language = $lang_manager->getLanguage($options['langcode'])) {
+      $language_manager = \Drupal::languageManager();
+      if ($language = $language_manager->getLanguage($options['langcode'])) {
         $options['language'] = $language;
       }
     }

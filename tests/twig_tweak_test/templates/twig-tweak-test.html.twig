@@ -43,7 +43,10 @@
   <div class="tt-token-data">{{ drupal_token('node:title', {'node': node}) }}</div>
   <div class="tt-config">{{ drupal_config('user.settings', 'anonymous') }}</div>
   <div class="tt-title">{{ drupal_title() }}</div>
-  <div class="tt-url">{{ drupal_url('node/1', {absolute: true}) }}</div>
+  <div class="tt-url">
+    <div data-case="default">{{ drupal_url('node/1', {absolute: true}) }}</div>
+    <div data-case="with-langcode">{{ drupal_url('node/1', {absolute: true, langcode: 'ru'}) }}</div>
+  </div>
   <div class="tt-link">{{ drupal_link('Edit', 'node/1/edit', {absolute: true}) }}</div>
   <div class="tt-link-html">{% set link_text %}<b>Edit</b>{% endset %}{{ drupal_link(link_text, 'node/1/edit', {absolute: true}) }}</div>
   <div class="tt-messages">{{ drupal_messages() }}</div>
