@@ -129,6 +129,11 @@ class TwigExtension extends \Twig_Extension {
           '#base_plugin_id' => $block_plugin->getBaseId(),
           '#derivative_plugin_id' => $block_plugin->getDerivativeId(),
           'content' => $content,
+          '#cache' => [
+            'contexts' => $block_plugin->getCacheContexts(),
+            'tags' => $block_plugin->getCacheTags(),
+            'max-age' => $block_plugin->getCacheMaxAge(),
+          ],
         ];
       }
       else {
