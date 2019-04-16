@@ -57,7 +57,6 @@ class TwigTweakTest extends BrowserTestBase {
       'breakpoint_group' => 'responsive_image',
     ])->save();
 
-
     // Setup Russian.
     ConfigurableLanguage::createFromLangcode('ru')->save();
   }

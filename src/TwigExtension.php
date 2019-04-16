@@ -116,6 +116,14 @@ class TwigExtension extends \Twig_Extension {
       return;
     }
 
+    // Title block needs special treatment.
+    if ($block_plugin instanceof TitleBlockPluginInterface) {
+      $request = \Drupal::request();
+      $route_match = \Drupal::routeMatch();
+      $title = \Drupal::service('title_resolver')->getTitle($request, $route_match->getRouteObject());
+      $block_plugin->setTitle($title);
+    }
+
     $content = $block_plugin->build();
 
     if ($content && !Element::isEmpty($content)) {
@@ -146,6 +154,10 @@ class TwigExtension extends \Twig_Extension {
         '#markup' => '',
         '#cache' => isset($content['#cache']) ? $content['#cache'] : [],
       ];
+    }
+
+    if ($block_plugin instanceof TitleBlockPluginInterface) {
+      $build['#cache']['contexts'][] = 'url';
     }
 
     if (!empty($content)) {
