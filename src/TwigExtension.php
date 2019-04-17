@@ -6,7 +6,6 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Block\TitleBlockPluginInterface;
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -137,7 +136,7 @@ class TwigExtension extends \Twig_Extension {
       $build['#cache']['contexts'][] = 'url';
     }
 
-    if ($wrapper) {
+    if ($wrapper && !Element::isEmpty($build['content'])) {
       $build += [
         '#theme' => 'block',
         '#attributes' => [],
