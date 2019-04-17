@@ -124,46 +124,29 @@ class TwigExtension extends \Twig_Extension {
       $block_plugin->setTitle($title);
     }
 
-    $content = $block_plugin->build();
-
-    if ($content && !Element::isEmpty($content)) {
-      if ($wrapper) {
-        $build = [
-          '#theme' => 'block',
-          '#attributes' => [],
-          '#contextual_links' => [],
-          '#configuration' => $block_plugin->getConfiguration(),
-          '#plugin_id' => $block_plugin->getPluginId(),
-          '#base_plugin_id' => $block_plugin->getBaseId(),
-          '#derivative_plugin_id' => $block_plugin->getDerivativeId(),
-          'content' => $content,
-          '#cache' => [
-            'contexts' => $block_plugin->getCacheContexts(),
-            'tags' => $block_plugin->getCacheTags(),
-            'max-age' => $block_plugin->getCacheMaxAge(),
-          ],
-        ];
-      }
-      else {
-        $build = $content;
-      }
-    }
-    else {
-      // Preserve cache metadata of empty blocks.
-      $build = [
-        '#markup' => '',
-        '#cache' => isset($content['#cache']) ? $content['#cache'] : [],
-      ];
-    }
+    $build = [
+      'content' => $block_plugin->build(),
+      '#cache' => [
+        'contexts' => $block_plugin->getCacheContexts(),
+        'tags' => $block_plugin->getCacheTags(),
+        'max-age' => $block_plugin->getCacheMaxAge(),
+      ],
+    ];
 
     if ($block_plugin instanceof TitleBlockPluginInterface) {
       $build['#cache']['contexts'][] = 'url';
     }
 
-    if (!empty($content)) {
-      CacheableMetadata::createFromRenderArray($build)
-        ->merge(CacheableMetadata::createFromRenderArray($content))
-        ->applyTo($build);
+    if ($wrapper) {
+      $build += [
+        '#theme' => 'block',
+        '#attributes' => [],
+        '#contextual_links' => [],
+        '#configuration' => $block_plugin->getConfiguration(),
+        '#plugin_id' => $block_plugin->getPluginId(),
+        '#base_plugin_id' => $block_plugin->getBaseId(),
+        '#derivative_plugin_id' => $block_plugin->getDerivativeId(),
+      ];
     }
 
     return $build;
