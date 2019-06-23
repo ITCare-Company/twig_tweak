@@ -35,7 +35,7 @@
   <div class="tt-menu-depth">{{ drupal_menu('twig-tweak-test', 1, 1) }}</div>
   <div class="tt-form">{{ drupal_form('Drupal\\system\\Form\\CronForm') }}</div>
   <div class="tt-image-by-fid">{{ drupal_image(1, attributes=image_attributes) }}</div>
-  <div class="tt-image-by-uri">{{ drupal_image('public://druplicon.png', attributes=image_attributes) }}</div>
+  <div class="tt-image-by-uri">{{ drupal_image('public://image-test.png', attributes=image_attributes) }}</div>
   <div class="tt-image-by-uuid">{{ drupal_image('b2c22b6f-7bf8-4da4-9de5-316e93487518', attributes=image_attributes) }}</div>
   <div class="tt-image-with-style">{{ drupal_image(1, 'thumbnail', image_attributes) }}</div>
   <div class="tt-image-with-responsive-style">{{ drupal_image(1, 'example', image_attributes, true) }}</div>
@@ -76,4 +76,8 @@
   <div class="tt-node-view">{{ node|view }}</div>
   <div class="tt-field-list-view">{{ node.title|view }}</div>
   <div class="tt-field-item-view">{{ node.title[0]|view }}</div>
+  <div class="tt-file-url-from-uri">{{ 'public://image-test.png'|file_url }}</div>
+  <div class="tt-file-url-from-image-field">{{ node.field_image|file_url }}</div>
+  <div class="tt-file-url-from-image-field-delta">{{ node.field_image[0]|file_url }}</div>
+  <div class="tt-file-url-from-media-field">{{ node.field_media|file_url }}</div>
 </div>

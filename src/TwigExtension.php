@@ -7,15 +7,21 @@ use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Block\TitleBlockPluginInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Link;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\media\MediaInterface;
+use Drupal\media\Plugin\media\Source\OEmbedInterface;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
@@ -69,6 +75,7 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFilter('view', [$this, 'view']),
       new \Twig_SimpleFilter('with', [$this, 'with']),
       new \Twig_SimpleFilter('children', [$this, 'children']),
+      new \Twig_SimpleFilter('file_url', [$this, 'fileUrl']),
     ];
     // PHP filter should be enabled in settings.php file.
     if (Settings::get('twig_tweak_enable_php_filter')) {
@@ -763,6 +770,75 @@ class TwigExtension extends \Twig_Extension {
       return \Drupal::entityTypeManager()
         ->getViewBuilder($object->getEntityTypeId())
         ->view($object, $display_options, $langcode);
+    }
+  }
+
+  /**
+   * Returns a URL path to the file.
+   *
+   * Examples:
+   *
+   * For string arguments it works similar to core file_url() Twig function.
+   * @code
+   *   {{ 'public://sea.jpg'|file_url }}
+   * @endcode
+   *
+   * When field item list passed the URL will be extracted from the first item.
+   * In order to get URL of specific item specify its delta explicitly using
+   * array notation.
+   * @code
+   *   {{ node.field_image|file_url }}
+   *   {{ node.field_image[0]|file_url }}
+   * @endcode
+   *
+   * Media fields are fully supported including OEmbed resources.
+   * @code
+   *   {{ node.field_media|file_url }}
+   * @endcode
+   *
+   * @param string|object $input
+   *   Can be either file URI or an object that contains the URI.
+   *
+   * @return string|null
+   *   A URL that may be used to access the file.
+   */
+  public function fileUrl($input) {
+    if (is_string($input)) {
+      return file_url_transform_relative(file_create_url($input));
+    }
+    if ($input instanceof EntityReferenceFieldItemListInterface) {
+      $referenced_entities = $input->referencedEntities();
+      if (isset($referenced_entities[0])) {
+        return self::getUrlFromEntity($referenced_entities[0]);
+      }
+    }
+    elseif ($input instanceof EntityReferenceItem) {
+      return self::getUrlFromEntity($input->entity);
+    }
+  }
+
+  /**
+   * Extracts file URL form content entity.
+   *
+   * @param object $entity
+   *   Entity object that contains information about the file.
+   *
+   * @return string|null
+   *   A URL that may be used to access the file.
+   */
+  private static function getUrlFromEntity($entity) {
+    if ($entity instanceof MediaInterface) {
+      $source = $entity->getSource();
+      $value = $source->getSourceFieldValue($entity);
+      if ($source instanceof OEmbedInterface) {
+        return $value;
+      }
+      elseif ($file = File::load($value)) {
+        return $file->createFileUrl();
+      }
+    }
+    elseif ($entity instanceof FileInterface) {
+      return $entity->createFileUrl();
     }
   }
 

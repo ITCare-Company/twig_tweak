@@ -6,9 +6,11 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\language\Entity\ConfigurableLanguage;
+use Drupal\media\Entity\Media;
 use Drupal\responsive_image\Entity\ResponsiveImageStyle;
 use Drupal\Core\Render\Markup;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\TestFileCreationTrait;
 use Drupal\user\Entity\Role;
 
 /**
@@ -17,6 +19,8 @@ use Drupal\user\Entity\Role;
  * @group twig_tweak
  */
 class TwigTweakTest extends BrowserTestBase {
+
+  use TestFileCreationTrait;
 
   /**
    * {@inheritdoc}
@@ -37,19 +41,45 @@ class TwigTweakTest extends BrowserTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $this->createContentType(['type' => 'page']);
-    $this->createNode(['title' => 'Alpha']);
+
+    $test_files = $this->getTestFiles('image');
+
+    $image_file = File::create([
+      'uri' => $test_files[0]->uri,
+      'uuid' => 'b2c22b6f-7bf8-4da4-9de5-316e93487518',
+      'status' => FILE_STATUS_PERMANENT,
+    ]);
+    $image_file->save();
+
+    $media_file = File::create([
+      'uri' => $test_files[8]->uri,
+      'uuid' => '5dd794d0-cb75-4130-9296-838aebc1fe74',
+      'status' => FILE_STATUS_PERMANENT,
+    ]);
+    $media_file->save();
+
+    $media = Media::create([
+      'bundle' => 'image',
+      'name' => 'Image 1',
+      'field_media_image' => ['target_id' => $media_file->id()],
+    ]);
+    $media->save();
+
+    $node_values = [
+      'title' => 'Alpha',
+      'field_image' => [
+        'target_id' => $image_file->id(),
+        'alt' => 'Alt text',
+        'title' => 'Title',
+      ],
+      'field_media' => [
+        'target_id' => $media->id(),
+      ],
+    ];
+
+    $this->createNode($node_values);
     $this->createNode(['title' => 'Beta']);
     $this->createNode(['title' => 'Gamma']);
-
-    file_unmanaged_copy(DRUPAL_ROOT . '/core/misc/druplicon.png', 'public://druplicon.png');
-    $file = File::create([
-      'uri' => 'public://druplicon.png',
-      'filename' => 'druplicon.png',
-      'uuid' => 'b2c22b6f-7bf8-4da4-9de5-316e93487518',
-      'status' => 1,
-    ]);
-    $file->save();
 
     ResponsiveImageStyle::create([
       'id' => 'example',
@@ -181,23 +211,23 @@ class TwigTweakTest extends BrowserTestBase {
     $this->assertByXpath($xpath);
 
     // Test image by FID.
-    $xpath = '//div[@class = "tt-image-by-fid"]/img[contains(@src, "/files/druplicon.png")]';
+    $xpath = '//div[@class = "tt-image-by-fid"]/img[contains(@src, "/files/image-test.png")]';
     $this->assertByXpath($xpath);
 
     // Test image by URI.
-    $xpath = '//div[@class = "tt-image-by-uri"]/img[contains(@src, "/files/druplicon.png")]';
+    $xpath = '//div[@class = "tt-image-by-uri"]/img[contains(@src, "/files/image-test.png")]';
     $this->assertByXpath($xpath);
 
     // Test image by UUID.
-    $xpath = '//div[@class = "tt-image-by-uuid"]/img[contains(@src, "/files/druplicon.png")]';
+    $xpath = '//div[@class = "tt-image-by-uuid"]/img[contains(@src, "/files/image-test.png")]';
     $this->assertByXpath($xpath);
 
     // Test image with style.
-    $xpath = '//div[@class = "tt-image-with-style"]/img[contains(@src, "/files/styles/thumbnail/public/druplicon.png")]';
+    $xpath = '//div[@class = "tt-image-with-style"]/img[contains(@src, "/files/styles/thumbnail/public/image-test.png")]';
     $this->assertByXpath($xpath);
 
     // Test image with responsive style.
-    $xpath = '//div[@class = "tt-image-with-responsive-style"]/picture/img[contains(@src, "/files/druplicon.png")]';
+    $xpath = '//div[@class = "tt-image-with-responsive-style"]/picture/img[contains(@src, "/files/image-test.png")]';
     $this->assertByXpath($xpath);
 
     // Test token.
@@ -285,7 +315,6 @@ class TwigTweakTest extends BrowserTestBase {
 
     // Test node view.
     $xpath = '//div[@class = "tt-node-view"]/article[contains(@class, "node--view-mode-default")]/h2[a/span[text() = "Beta"]]';
-    $xpath .= '/following-sibling::footer[//h4[text() = "Member for"]]';
     $xpath .= '/following-sibling::div[@class = "node__content"]/div/p';
     $this->assertByXpath($xpath);
 
@@ -295,6 +324,23 @@ class TwigTweakTest extends BrowserTestBase {
 
     // Field item view.
     $xpath = '//div[@class = "tt-field-item-view" and text() = "Beta"]';
+    $this->assertByXpath($xpath);
+
+    // Test file URL from URI.
+    $xpath = '//div[@class = "tt-file-url-from-uri" and contains(text(), "/files/image-test.png")]';
+    $this->assertByXpath($xpath);
+
+    // Test file URL from image field.
+    $this->drupalGet('/node/1');
+    $xpath = '//div[@class = "tt-file-url-from-image-field" and contains(text(), "/files/image-test.png")]';
+    $this->assertByXpath($xpath);
+
+    // Test file URL from a specific image field item.
+    $xpath = '//div[@class = "tt-file-url-from-image-field-delta" and contains(text(), "/files/image-test.png")]';
+    $this->assertByXpath($xpath);
+
+    // Test file URL from media field.
+    $xpath = '//div[@class = "tt-file-url-from-media-field" and contains(text(), "/files/image-1.png")]';
     $this->assertByXpath($xpath);
   }
 
