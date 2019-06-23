@@ -630,14 +630,17 @@ class TwigExtension extends \Twig_Extension {
    * @param string $style
    *   The image style.
    *
-   * @return string
+   * @return string|null
    *   The absolute URL where a style image can be downloaded, suitable for use
    *   in an <img> tag. Requesting the URL will cause the image to be created.
    */
   public function imageStyle($path, $style) {
-    /** @var \Drupal\Image\ImageStyleInterface $image_style */
     if ($image_style = ImageStyle::load($style)) {
       return file_url_transform_relative($image_style->buildUrl($path));
+    }
+    else {
+      // @todo Throw an exception int 3.x.
+      trigger_error(sprintf('Could not load image style %s.', $style));
     }
   }
 
