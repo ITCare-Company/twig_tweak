@@ -309,6 +309,10 @@ class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-with"]/b[text() = "Example"]';
     $this->assertByXpath($xpath);
 
+    // Test nested 'with'.
+    $xpath = '//div[@class = "tt-with-nested" and text() = "{alpha:{beta:{gamma:456}}}"]';
+    $this->assertByXpath($xpath);
+
     // Test 'children'.
     $xpath = '//div[@class = "tt-children" and text() = "doremi"]';
     $this->assertByXpath($xpath);

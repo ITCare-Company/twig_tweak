@@ -2,6 +2,7 @@
 
 namespace Drupal\twig_tweak;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Block\BlockPluginInterface;
@@ -720,7 +721,7 @@ class TwigExtension extends \Twig_Extension {
    *
    * @param array $build
    *   The renderable array to add the child item.
-   * @param int|string $key
+   * @param mixed $key
    *   The key of the new element.
    * @param mixed $element
    *   The element to add.
@@ -729,7 +730,12 @@ class TwigExtension extends \Twig_Extension {
    *   The modified array.
    */
   public function with(array $build, $key, $element) {
-    $build[$key] = $element;
+    if (is_array($key)) {
+      NestedArray::setValue($build, $key, $element);
+    }
+    else {
+      $build[$key] = $element;
+    }
     return $build;
   }
 
