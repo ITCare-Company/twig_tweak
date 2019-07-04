@@ -13,6 +13,6 @@
     "drupal/core": "^8.7"
   },
   "suggest": {
-    "symfony/var-dumper": "better dump() function for debugging Twig variables"
+    "symfony/var-dumper": "Better dump() function for debugging Twig variables"
   }
 }

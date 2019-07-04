@@ -28,7 +28,7 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 /**
  * Twig extension with some useful functions and filters.
  *
- * Dependency injection is not used for performance reason.
+ * Dependencies are not injected for performance reason.
  */
 class TwigExtension extends \Twig_Extension {
 
@@ -36,8 +36,8 @@ class TwigExtension extends \Twig_Extension {
    * {@inheritdoc}
    */
   public function getFunctions() {
-    $all_options = ['needs_environment' => TRUE, 'needs_context' => TRUE];
     $context_options = ['needs_context' => TRUE];
+    $all_options = ['needs_environment' => TRUE, 'needs_context' => TRUE];
     return [
       new \Twig_SimpleFunction('drupal_view', 'views_embed_view'),
       new \Twig_SimpleFunction('drupal_view_result', 'views_get_view_result'),
@@ -95,12 +95,32 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Builds the render array for a block.
    *
+   * In order to list all registered plugin IDs fetch them with block plugin
+   * manager. With Drush it can be done like follows:
+   * @code
+   *   drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefinitions()));"
+   * @endcode
+   *
+   * Examples:
+   * @code
+   *   # Print block using default configuration.
+   *   {{ drupal_block('system_branding_block') }}
+   *
+   *   # Print block using custom configuration.
+   *   {{ drupal_block('system_branding_block', {label: 'Branding', use_site_name: false})
+   *
+   *   # Bypass block.html.twig theming.
+   *   {{ drupal_block('system_branding_block', wrapper=false) }}
+   * @endcode
+   *
+   * @see https://www.drupal.org/node/2964457#block-plugin
+   *
    * @param mixed $id
    *   The string of block plugin to render.
    * @param array $configuration
-   *   (Optional) Pass on any configuration to the plugin block.
+   *   (optional) Pass on any configuration to the plugin block.
    * @param bool $wrapper
-   *   (Optional) Whether or not use block template for rendering.
+   *   (optional) Whether or not use block template for rendering.
    *
    * @return null|array
    *   A render array for the block or NULL if the block cannot be rendered.
@@ -162,10 +182,19 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Builds the render array of a given region.
    *
+   * Examples:
+   * @code
+   *   # Print 'Sidebar First' region of the default site theme.
+   *   {{ drupal_region('sidebar_first') }}
+   *
+   *   # Print 'Sidebar First' region of Bartik theme.
+   *   {{ drupal_region('sidebar_first', 'bartik') }}
+   * @endcode
+   *
    * @param string $region
    *   The region to build.
    * @param string $theme
-   *   (Optional) The name of the theme to load the region. If it is not
+   *   (optional) The name of the theme to load the region. If it is not
    *   provided then default theme will be used.
    *
    * @return array
@@ -205,19 +234,35 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
-   * Returns the render array for an entity.
+   * Returns the render array to represent and entity.
+   *
+   * Examples:
+   * @code
+   *   # Print a content block which ID is 1.
+   *   {{ drupal_entity('block_content', 1) }}
+   *
+   *   # Print a user which ID is fetched from URL (i.e. /user/1).
+   *   {{ drupal_entity('user') }}
+   *
+   *   # Print a node's teaser.
+   *   {{ drupal_entity('node', 123, 'teaser') }}
+   *
+   *   # Print Branding block which was previously disabled on
+   *   # admin/structure/block page.
+   *   {{ drupal_entity('block', 'bartik_branding', check_access=false) }}
+   * @endcode
    *
    * @param string $entity_type
    *   The entity type.
    * @param mixed $id
-   *   The ID of the entity to build.
+   *   (optional) The ID of the entity to build.
    * @param string $view_mode
    *   (optional) The view mode that should be used to render the entity.
    * @param string $langcode
    *   (optional) For which language the entity should be rendered, defaults to
    *   the current content language.
    * @param bool $check_access
-   *   (Optional) Indicates that access check is required.
+   *   (optional) Indicates that access check is required.
    *
    * @return null|array
    *   A render array for the entity or NULL if the entity does not exist.
@@ -236,6 +281,18 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Gets the built and processed entity form for the given entity type.
    *
+   * Examples:
+   * @code
+   *   # Print edit form for node 1.
+   *   {{ drupal_entity_form('node', 1) }}
+   *
+   *   # Print add form for Article content type.
+   *   {{ drupal_entity_form('node', values={type: 'article'}) }}
+   *
+   *   # Print user register form.
+   *   {{ drupal_entity_form('user', NULL, 'register', check_access=false) }}
+   * @endcode
+   *
    * @param string $entity_type
    *   The entity type.
    * @param mixed $id
@@ -246,7 +303,7 @@ class TwigExtension extends \Twig_Extension {
    * @param array $values
    *   (optional) An array of values to set, keyed by property name.
    * @param bool $check_access
-   *   (Optional) Indicates that access check is required.
+   *   (optional) Indicates that access check is required.
    *
    * @return array
    *   The processed form for the given entity type and form mode.
@@ -269,6 +326,14 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Returns the render array for a single entity field.
    *
+   * This works very much like drupal_entity() except it prints only one
+   * specific field.
+   *
+   * Example:
+   * @code
+   *   {{ drupal_field('field_image', 'node', 1) }}
+   * @endcode
+   *
    * @param string $field_name
    *   The field name.
    * @param string $entity_type
@@ -280,7 +345,7 @@ class TwigExtension extends \Twig_Extension {
    * @param string $langcode
    *   (optional) Language code to load translation.
    * @param bool $check_access
-   *   (Optional) Indicates that access check is required.
+   *   (optional) Indicates that access check is required.
    *
    * @return null|array
    *   A render array for the field or NULL if the value does not exist.
@@ -301,6 +366,11 @@ class TwigExtension extends \Twig_Extension {
 
   /**
    * Returns the render array for Drupal menu.
+   *
+   * Example:
+   * @code
+   *   {{ drupal_menu('main') }}
+   * @endcode
    *
    * @param string $menu_name
    *   The name of the menu.
@@ -346,6 +416,11 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Builds and processes a form for a given form ID.
    *
+   * Example:
+   * @code
+   *   {{ drupal_form('Drupal\\search\\Form\\SearchBlockForm') }}
+   * @endcode
+   *
    * @param string $form_id
    *   The form ID.
    * @param ...
@@ -355,23 +430,41 @@ class TwigExtension extends \Twig_Extension {
    *   A render array to represent the form.
    */
   public function drupalForm($form_id) {
-    $form_builder = \Drupal::formBuilder();
-    return call_user_func_array([$form_builder, 'getForm'], func_get_args());
+    $callback = [\Drupal::formBuilder(), 'getForm'];
+    return call_user_func_array($callback, func_get_args());
   }
 
   /**
    * Builds an image.
    *
+   * Examples:
+   * @code
+   *   # Render image specified by file ID.
+   *   {{ drupal_image(123) }}
+   *
+   *   # Render image specified by file UUID.
+   *   {{ drupal_image('9bb27144-e6b2-4847-bd24-adcc59613ec0') }}
+   *
+   *   # Render image specified by file URI.
+   *   {{ drupal_image('public://ocean.jpg') }}
+   *
+   *   # Render image using 'thumbnail' image style and custom attributes.
+   *   {{ drupal_image('public://ocean.jpg', 'thumbnail', {alt: 'The alternative text'|t, title: 'The title text'|t}) }}
+   *
+   *   # Render responsive image.
+   *   {{ drupal_image('public://ocean.jpg', 'wide', responsive=true) }}
+   * @endcode
+   *
    * @param mixed $property
    *   A property to identify the image.
    * @param string $style
-   *   (Optional) Image style.
+   *   (optional) Image style.
    * @param array $attributes
-   *   (Optional) Image attributes.
+   *   (optional) Image attributes.
    * @param bool $responsive
-   *   (Optional) Indicates that the provided image style is responsive.
+   *   (optional) Indicates that the provided image style is responsive.
    * @param bool $check_access
-   *   (Optional) Indicates that access check is required.
+   *   (optional) Indicates that access check is required.
    *
    * @return array|null
    *   A render array to represent the image.
@@ -429,6 +522,11 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Replaces a given tokens with appropriate value.
    *
+   * Example:
+   * @code
+   *   {{ drupal_token('site:name') }}
+   * @endcode
+   *
    * @param string $token
    *   A replaceable token.
    * @param array $data
@@ -451,7 +549,12 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
-   * Gets data from this configuration.
+   * Retrieves data from a given configuration object.
+   *
+   * Example:
+   * @code
+   *   {{ drupal_config('system.site', 'name') }}
+   * @endcode
    *
    * @param string $name
    *   The name of the configuration object to construct.
@@ -468,10 +571,22 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Dumps information about variables.
    *
+   * Examples:
+   * @code
+   *   # Basic usage.
+   *   {{ drupal_dump(var) }}
+   *
+   *   # Same as above but shorter.
+   *   {{ dd(var) }}
+   *
+   *   # Dump all available variables for the current template.
+   *   {{ dd() }}
+   * @endcode
+   *
    * @param array $context
    *   Variables from the Twig template.
    * @param mixed $variable
-   *   (Optional) The variable to dump.
+   *   (optional) The variable to dump.
    */
   public function drupalDump(array $context, $variable = NULL) {
     $var_dumper = '\Symfony\Component\VarDumper\VarDumper';
@@ -502,12 +617,21 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Generates a URL from an internal path.
    *
+   * Examples:
+   * @code
+   *   # Basic usage.
+   *   {{ drupal_url('node/1) }}
+   *
+   *   # Complex URL.
+   *   {{ drupal_url('node/1', {query: {foo: 'bar'}, fragment: 'example', absolute: true}) }}
+   * @endcode
+   *
    * @param string $user_input
    *   User input for a link or path.
    * @param array $options
    *   (optional) An array of options.
    * @param bool $check_access
-   *   (Optional) Indicates that access check is required.
+   *   (optional) Indicates that access check is required.
    *
    * @return \Drupal\Core\Url
    *   A new Url object based on user input.
@@ -533,6 +657,15 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Generates a link from an internal path.
    *
+   * Examples:
+   * @code
+   *   # It supports the same options as drupal_url(), plus attributes.
+   *   {{ drupal_link('View'|t, 'node/1', {attributes: {target: '_blank'}}) }}
+   *
+   *   # This link will only be shown for privileged users.
+   *   {{ drupal_link('Example'|t, '/admin', check_access=true) }}
+   * @endcode
+   *
    * @param string $text
    *   The text to be used for the link.
    * @param string $user_input
@@ -540,7 +673,7 @@ class TwigExtension extends \Twig_Extension {
    * @param array $options
    *   (optional) An array of options.
    * @param bool $check_access
-   *   (Optional) Indicates that access check is required.
+   *   (optional) Indicates that access check is required.
    *
    * @return \Drupal\Core\Link
    *   A new Link object.
@@ -596,6 +729,18 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Replaces all tokens in a given string with appropriate values.
    *
+   * Example:
+   * @code
+   *   # Basic usage.
+   *   {{ '<h1>[site:name]</h1><div>[site:slogan]</div>'|token_replace }}
+   *
+   *   # This is more suited to large markup (requires Twig >= 1.41).
+   *   {% apply token_replace %}
+   *     <h1>[site:name]</h1>
+   *     <div>[site:slogan]</div>
+   *   {% endapply %}
+   * @endcode
+   *
    * @param string $text
    *   An HTML string containing replaceable tokens.
    *
@@ -608,6 +753,14 @@ class TwigExtension extends \Twig_Extension {
 
   /**
    * Performs a regular expression search and replace.
+   *
+   * Example:
+   * @code
+   *   {{ 'Drupal - community plumbing!'|preg_replace('/(Drupal)/', '<b>$1</b>') }}
+   * @endcode
+   *
+   * For simple string interpolation consider using built-in 'replace' or
+   * 'format' Twig filters.
    *
    * @param string $text
    *   The text to search and replace.
@@ -626,6 +779,11 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Returns the URL of this image derivative for an original image path or URI.
    *
+   * Example:
+   * @code
+   *  {{ 'public://images/ocean.jpg'|image_style('thumbnail') }}
+   * @endcode
+   *
    * @param string $path
    *   The path or URI to the original image.
    * @param string $style
@@ -640,13 +798,18 @@ class TwigExtension extends \Twig_Extension {
       return file_url_transform_relative($image_style->buildUrl($path));
     }
     else {
-      // @todo Throw an exception int 3.x.
+      // @todo Throw an exception in 3.x.
       trigger_error(sprintf('Could not load image style %s.', $style));
     }
   }
 
   /**
    * Transliterates text from Unicode to US-ASCII.
+   *
+   * Example:
+   * @code
+   *   {{ 'Привет!'|transliterate }}
+   * @endcod
    *
    * @param string $string
    *   The string to transliterate.
@@ -672,6 +835,11 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Runs all the enabled filters on a piece of text.
    *
+   * Example.
+   * @code
+   *   {{ '<b>bold</b> <strong>strong</strong>'|check_markup('restricted_html') }}
+   * @endcode
+   *
    * @param string $text
    *   The text to be filtered.
    * @param string|null $format_id
@@ -695,17 +863,22 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Truncates a UTF-8-encoded string safely to a number of characters.
    *
+   * Example:
+   * @code
+   *   {{ 'Some long text'|truncate(10, true) }}
+   * @endcode
+   *
    * @param string $string
    *   The string to truncate.
    * @param int $max_length
    *   An upper limit on the returned string length, including trailing ellipsis
    *   if $add_ellipsis is TRUE.
    * @param bool $wordsafe
-   *   (Optional) If TRUE, attempt to truncate on a word boundary.
+   *   (optional) If TRUE, attempt to truncate on a word boundary.
    * @param bool $add_ellipsis
-   *   (Optional) If TRUE, add '...' to the end of the truncated string.
+   *   (optional) If TRUE, add '...' to the end of the truncated string.
    * @param int $min_wordsafe_length
-   *   (Optional) If TRUE, the minimum acceptable length for truncation.
+   *   (optional) If TRUE, the minimum acceptable length for truncation.
    *
    * @return string
    *   The truncated string.
@@ -718,6 +891,15 @@ class TwigExtension extends \Twig_Extension {
 
   /**
    * Adds new element to the array.
+   *
+   * Examples:
+   * @code
+   *   # Set top level value.
+   *   {{ content.field_image|with('#title', 'Photo'|t) }}
+   *
+   *   # Set nested value.
+   *   {{ content|with(['field_image', '#title'], 'Photo'|t) }}
+   * @endcode
    *
    * @param array $build
    *   The renderable array to add the child item.
@@ -740,23 +922,22 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
-   * Filters out the children of a render array, optionally sorted by weight.
-   *
-   * @param array $build
-   *   The render array whose children are to be filtered.
-   * @param bool $sort
-   *   Boolean to indicate whether the children should be sorted by weight.
-   *
-   * @return array
-   *   The element's children.
-   */
-  public function children(array $build, $sort = FALSE) {
-    $keys = Element::children($build, $sort);
-    return array_intersect_key($build, array_flip($keys));
-  }
-
-  /**
    * Returns a render array for entity, field list or field item.
+   *
+   * Examples:
+   *
+   * Do not put this into node.html.twig template to avoid recursion.
+   * @code
+   *   {{ node|view }}
+   *   {{ node|view('teaser') }}
+   * @endcode
+   *
+   * @code
+   *   {{ node.field_image|view }}
+   *   {{ node.field_image[0]|view }}
+   *   {{ node.field_image|view('teaser') }}
+   *   {{ node.field_image|view({settings: {image_style: 'thumbnail'}}) }}
+   * @endcode
    *
    * @param mixed $object
    *   The object to build a render array from.
@@ -766,7 +947,7 @@ class TwigExtension extends \Twig_Extension {
    *   (optional) For which language the entity should be rendered, defaults to
    *   the current content language.
    * @param bool $check_access
-   *   (Optional) Indicates that access check is required.
+   *   (optional) Indicates that access check is required.
    *
    * @return array
    *   A render array to represent the object.
@@ -780,6 +961,31 @@ class TwigExtension extends \Twig_Extension {
         ->getViewBuilder($object->getEntityTypeId())
         ->view($object, $display_options, $langcode);
     }
+  }
+
+  /**
+   * Filters out the children of a render array, optionally sorted by weight.
+   *
+   * Example:
+   * @code
+   * <ul>
+   *   {% for tag in content.field_tags|children %}
+   *     <li>{{ tag }}</li>
+   *   {% endfor %}
+   * </ul>
+   * @endcode
+   *
+   * @param array $build
+   *   The render array whose children are to be filtered.
+   * @param bool $sort
+   *   Boolean to indicate whether the children should be sorted by weight.
+   *
+   * @return array
+   *   The element's children.
+   */
+  public function children(array $build, $sort = FALSE) {
+    $keys = Element::children($build, $sort);
+    return array_intersect_key($build, array_flip($keys));
   }
 
   /**
@@ -853,6 +1059,25 @@ class TwigExtension extends \Twig_Extension {
 
   /**
    * Evaluates a string of PHP code.
+   *
+   * PHP filter is disabled by default. You can enable it in settings.php file
+   * as follows:
+   * @code
+   *   $settings['twig_tweak_enable_php_filter'] = TRUE;
+   * @endcode
+   *
+   * Usage example:
+   * @code
+   *   {{ 'return date('Y');'|php }}
+   * @endcode
+   *
+   * Using PHP filter is discouraged as it may cause security implications. In
+   * fact it is very rarely needed.
+   *
+   * The above code can be replaced with following.
+   * @code
+   *   {{ 'now'|date('Y') }}
+   * @endcode
    *
    * @param string $code
    *   Valid PHP code to be evaluated.
