@@ -34,6 +34,7 @@ class TwigTweakTest extends BrowserTestBase {
     'image',
     'responsive_image',
     'language',
+    'contextual',
   ];
 
   /**
@@ -283,6 +284,15 @@ class TwigTweakTest extends BrowserTestBase {
 
     // Test token replacement.
     $xpath = '//div[@class = "tt-token-replace" and text() = "Site name: Drupal"]';
+    $this->assertByXpath($xpath);
+
+    // Test contextual links.
+    $xpath = '//div[@class="tt-contextual-links" and not(div[@data-contextual-id])]';
+    $this->assertByXpath($xpath);
+
+    $this->grantPermissions(Role::load(Role::ANONYMOUS_ID), ['access contextual links']);
+    $this->drupalGet($this->getUrl());
+    $xpath = '//div[@class="tt-contextual-links" and div[@data-contextual-id]]';
     $this->assertByXpath($xpath);
 
     // Test preg replacement.

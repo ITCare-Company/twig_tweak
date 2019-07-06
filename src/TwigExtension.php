@@ -59,6 +59,7 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFunction('drupal_messages', [$this, 'drupalMessages']),
       new \Twig_SimpleFunction('drupal_breadcrumb', [$this, 'drupalBreadcrumb']),
       new \Twig_SimpleFunction('drupal_breakpoint', [$this, 'drupalBreakpoint'], $all_options),
+      new \Twig_SimpleFunction('contextual_links', [$this, 'contextualLInks']),
     ];
   }
 
@@ -710,6 +711,41 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
+   * Builds contextual links.
+   *
+   * Examples:
+   * @code
+   *   # Basic usage.
+   *   <div class="contextual-region">
+   *     {{ contextual_links('entity.view.edit_form:view=frontpage&display_id=feed_1') }}
+   *     {{ drupal_view('frontpage') }}
+   *   </div>
+   *
+   *   # Multiple links.
+   *   <div class="contextual-region">
+   *     {{ contextual_links('node:node=123|block_content:block_content=123') }}
+   *     {{ content }}
+   *   </div>
+   * @endcode
+   *
+   * @param string $id
+   *   A serialized representation of a #contextual_links property value array.
+   *
+   * @return array
+   *   A renderable array representing contextual links.
+   *
+   * @see https://www.drupal.org/node/2133283
+   */
+  public function contextualLinks($id) {
+    $build['#cache']['contexts'] = ['user.permissions'];
+    if (\Drupal::currentUser()->hasPermission('access contextual links')) {
+      $build['#type'] = 'contextual_links_placeholder';
+      $build['#id'] = $id;
+    }
+    return $build;
+  }
+
+  /**
    * Emits a breakpoint to the debug client.
    *
    * @param \Twig_Environment $environment
@@ -798,7 +834,6 @@ class TwigExtension extends \Twig_Extension {
       return file_url_transform_relative($image_style->buildUrl($path));
     }
     else {
-      // @todo Throw an exception in 3.x.
       trigger_error(sprintf('Could not load image style %s.', $style));
     }
   }
