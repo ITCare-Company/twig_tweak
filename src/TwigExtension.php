@@ -327,12 +327,11 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Returns the render array for a single entity field.
    *
-   * This works very much like drupal_entity() except it prints only one
-   * specific field.
-   *
    * Example:
    * @code
    *   {{ drupal_field('field_image', 'node', 1) }}
+   *   {{ drupal_field('field_image', 'node', 1, 'teaser') }}
+   *   {{ drupal_field('field_image', 'node', 1, {type: 'image_url', settings: {image_style: 'large'}}) }}
    * @endcode
    *
    * @param string $field_name
