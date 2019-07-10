@@ -829,12 +829,18 @@ class TwigExtension extends \Twig_Extension {
    *   in an <img> tag. Requesting the URL will cause the image to be created.
    */
   public function imageStyle($path, $style) {
-    if ($image_style = ImageStyle::load($style)) {
-      return file_url_transform_relative($image_style->buildUrl($path));
-    }
-    else {
+
+    if (!$image_style = ImageStyle::load($style)) {
       trigger_error(sprintf('Could not load image style %s.', $style));
+      return;
     }
+
+    if (!$image_style->supportsUri($path)) {
+      trigger_error(sprintf('Could not apply image style %s.', $style));
+      return;
+    }
+
+    return file_url_transform_relative($image_style->buildUrl($path));
   }
 
   /**
