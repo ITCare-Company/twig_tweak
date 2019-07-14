@@ -242,9 +242,6 @@ class TwigExtension extends \Twig_Extension {
    *   # Print a content block which ID is 1.
    *   {{ drupal_entity('block_content', 1) }}
    *
-   *   # Print a user which ID is fetched from URL (i.e. /user/1).
-   *   {{ drupal_entity('user') }}
-   *
    *   # Print a node's teaser.
    *   {{ drupal_entity('node', 123, 'teaser') }}
    *
@@ -270,9 +267,13 @@ class TwigExtension extends \Twig_Extension {
    */
   public function drupalEntity($entity_type, $id = NULL, $view_mode = NULL, $langcode = NULL, $check_access = TRUE) {
     $entity_type_manager = \Drupal::entityTypeManager();
-    $entity = $id
-      ? $entity_type_manager->getStorage($entity_type)->load($id)
-      : \Drupal::routeMatch()->getParameter($entity_type);
+    if ($id) {
+      $entity = $entity_type_manager->getStorage($entity_type)->load($id);
+    }
+    else {
+      @trigger_error('Loading entities from route is deprecated in Twig Tweak 2.4 and will not be supported in Twig Tweak 3.0', E_USER_DEPRECATED);
+      $entity = \Drupal::routeMatch()->getParameter($entity_type);
+    }
     if ($entity && (!$check_access || $entity->access('view'))) {
       $render_controller = $entity_type_manager->getViewBuilder($entity_type);
       return $render_controller->view($entity, $view_mode, $langcode);
@@ -351,10 +352,13 @@ class TwigExtension extends \Twig_Extension {
    *   A render array for the field or NULL if the value does not exist.
    */
   public function drupalField($field_name, $entity_type, $id = NULL, $view_mode = 'default', $langcode = NULL, $check_access = TRUE) {
-    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-    $entity = $id
-      ? \Drupal::entityTypeManager()->getStorage($entity_type)->load($id)
-      : \Drupal::routeMatch()->getParameter($entity_type);
+    if ($id) {
+      $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($id);
+    }
+    else {
+      @trigger_error('Loading entities from route is deprecated in Twig Tweak 2.4 and will not be supported in Twig Tweak 3.0', E_USER_DEPRECATED);
+      $entity = \Drupal::routeMatch()->getParameter($entity_type);
+    }
     if ($entity && (!$check_access || $entity->access('view'))) {
       $entity = \Drupal::service('entity.repository')
         ->getTranslationFromContext($entity, $langcode);
