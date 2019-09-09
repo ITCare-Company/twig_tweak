@@ -104,13 +104,13 @@ class TwigExtension extends \Twig_Extension {
    *
    * Examples:
    * @code
-   *   # Print block using default configuration.
+   *   {# Print block using default configuration. #}
    *   {{ drupal_block('system_branding_block') }}
    *
-   *   # Print block using custom configuration.
+   *   {# Print block using custom configuration. #}
    *   {{ drupal_block('system_branding_block', {label: 'Branding', use_site_name: false})
    *
-   *   # Bypass block.html.twig theming.
+   *   {# Bypass block.html.twig theming. #}
    *   {{ drupal_block('system_branding_block', wrapper=false) }}
    * @endcode
    *
@@ -185,10 +185,10 @@ class TwigExtension extends \Twig_Extension {
    *
    * Examples:
    * @code
-   *   # Print 'Sidebar First' region of the default site theme.
+   *   {# Print 'Sidebar First' region of the default site theme. #}
    *   {{ drupal_region('sidebar_first') }}
    *
-   *   # Print 'Sidebar First' region of Bartik theme.
+   *   {# Print 'Sidebar First' region of Bartik theme. #}
    *   {{ drupal_region('sidebar_first', 'bartik') }}
    * @endcode
    *
@@ -239,14 +239,14 @@ class TwigExtension extends \Twig_Extension {
    *
    * Examples:
    * @code
-   *   # Print a content block which ID is 1.
+   *   {# Print a content block which ID is 1. #}
    *   {{ drupal_entity('block_content', 1) }}
    *
-   *   # Print a node's teaser.
+   *   {# Print a node's teaser. #}
    *   {{ drupal_entity('node', 123, 'teaser') }}
    *
-   *   # Print Branding block which was previously disabled on
-   *   # admin/structure/block page.
+   *   {# Print Branding block which was previously disabled on #}
+   *   {# admin/structure/block page. #}
    *   {{ drupal_entity('block', 'bartik_branding', check_access=false) }}
    * @endcode
    *
@@ -285,13 +285,13 @@ class TwigExtension extends \Twig_Extension {
    *
    * Examples:
    * @code
-   *   # Print edit form for node 1.
+   *   {# Print edit form for node 1. #}
    *   {{ drupal_entity_form('node', 1) }}
    *
-   *   # Print add form for Article content type.
+   *   {# Print add form for Article content type. #}
    *   {{ drupal_entity_form('node', values={type: 'article'}) }}
    *
-   *   # Print user register form.
+   *   {# Print user register form. #}
    *   {{ drupal_entity_form('user', NULL, 'register', check_access=false) }}
    * @endcode
    *
@@ -443,19 +443,19 @@ class TwigExtension extends \Twig_Extension {
    *
    * Examples:
    * @code
-   *   # Render image specified by file ID.
+   *   {# Render image specified by file ID. #}
    *   {{ drupal_image(123) }}
    *
-   *   # Render image specified by file UUID.
+   *   {# Render image specified by file UUID. #}
    *   {{ drupal_image('9bb27144-e6b2-4847-bd24-adcc59613ec0') }}
    *
-   *   # Render image specified by file URI.
+   *   {# Render image specified by file URI. #}
    *   {{ drupal_image('public://ocean.jpg') }}
    *
-   *   # Render image using 'thumbnail' image style and custom attributes.
+   *   {# Render image using 'thumbnail' image style and custom attributes. #}
    *   {{ drupal_image('public://ocean.jpg', 'thumbnail', {alt: 'The alternative text'|t, title: 'The title text'|t}) }}
    *
-   *   # Render responsive image.
+   *   {# Render responsive image. #}
    *   {{ drupal_image('public://ocean.jpg', 'wide', responsive=true) }}
    * @endcode
    *
@@ -577,13 +577,13 @@ class TwigExtension extends \Twig_Extension {
    *
    * Examples:
    * @code
-   *   # Basic usage.
+   *   {# Basic usage. #}
    *   {{ drupal_dump(var) }}
    *
-   *   # Same as above but shorter.
+   *   {# Same as above but shorter. #}
    *   {{ dd(var) }}
    *
-   *   # Dump all available variables for the current template.
+   *   {# Dump all available variables for the current template. #}
    *   {{ dd() }}
    * @endcode
    *
@@ -623,10 +623,10 @@ class TwigExtension extends \Twig_Extension {
    *
    * Examples:
    * @code
-   *   # Basic usage.
+   *   {# Basic usage. #}
    *   {{ drupal_url('node/1) }}
    *
-   *   # Complex URL.
+   *   {# Complex URL. #}
    *   {{ drupal_url('node/1', {query: {foo: 'bar'}, fragment: 'example', absolute: true}) }}
    * @endcode
    *
@@ -663,10 +663,10 @@ class TwigExtension extends \Twig_Extension {
    *
    * Examples:
    * @code
-   *   # It supports the same options as drupal_url(), plus attributes.
+   *   {# It supports the same options as drupal_url(), plus attributes. #}
    *   {{ drupal_link('View'|t, 'node/1', {attributes: {target: '_blank'}}) }}
    *
-   *   # This link will only be shown for privileged users.
+   *   {# This link will only be shown for privileged users. #}
    *   {{ drupal_link('Example'|t, '/admin', check_access=true) }}
    * @endcode
    *
@@ -718,13 +718,13 @@ class TwigExtension extends \Twig_Extension {
    *
    * Examples:
    * @code
-   *   # Basic usage.
+   *   {# Basic usage. #}
    *   <div class="contextual-region">
    *     {{ contextual_links('entity.view.edit_form:view=frontpage&display_id=feed_1') }}
    *     {{ drupal_view('frontpage') }}
    *   </div>
    *
-   *   # Multiple links.
+   *   {# Multiple links. #}
    *   <div class="contextual-region">
    *     {{ contextual_links('node:node=123|block_content:block_content=123') }}
    *     {{ content }}
@@ -770,10 +770,10 @@ class TwigExtension extends \Twig_Extension {
    *
    * Example:
    * @code
-   *   # Basic usage.
+   *   {# Basic usage. #}
    *   {{ '<h1>[site:name]</h1><div>[site:slogan]</div>'|token_replace }}
    *
-   *   # This is more suited to large markup (requires Twig >= 1.41).
+   *   {# This is more suited to large markup (requires Twig >= 1.41). #}
    *   {% apply token_replace %}
    *     <h1>[site:name]</h1>
    *     <div>[site:slogan]</div>
@@ -938,10 +938,10 @@ class TwigExtension extends \Twig_Extension {
    *
    * Examples:
    * @code
-   *   # Set top level value.
+   *   {# Set top level value. #}
    *   {{ content.field_image|with('#title', 'Photo'|t) }}
    *
-   *   # Set nested value.
+   *   {# Set nested value. #}
    *   {{ content|with(['field_image', '#title'], 'Photo'|t) }}
    * @endcode
    *
@@ -1012,11 +1012,11 @@ class TwigExtension extends \Twig_Extension {
    *
    * Example:
    * @code
-   * <ul>
-   *   {% for tag in content.field_tags|children %}
-   *     <li>{{ tag }}</li>
-   *   {% endfor %}
-   * </ul>
+   *   <ul>
+   *     {% for tag in content.field_tags|children %}
+   *       <li>{{ tag }}</li>
+   *     {% endfor %}
+   *   </ul>
    * @endcode
    *
    * @param array $build
