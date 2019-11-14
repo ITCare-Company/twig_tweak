@@ -59,7 +59,7 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFunction('drupal_messages', [$this, 'drupalMessages']),
       new \Twig_SimpleFunction('drupal_breadcrumb', [$this, 'drupalBreadcrumb']),
       new \Twig_SimpleFunction('drupal_breakpoint', [$this, 'drupalBreakpoint'], $all_options),
-      new \Twig_SimpleFunction('contextual_links', [$this, 'contextualLInks']),
+      new \Twig_SimpleFunction('contextual_links', [$this, 'contextualLinks']),
     ];
   }
 
