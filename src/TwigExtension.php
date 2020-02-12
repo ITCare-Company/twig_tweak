@@ -5,8 +5,10 @@ namespace Drupal\twig_tweak;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Uuid\Uuid;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Block\TitleBlockPluginInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldItemInterface;
@@ -140,42 +142,39 @@ class TwigExtension extends \Twig_Extension {
       \Drupal::service('context.handler')->applyContextMapping($block_plugin, $contexts);
     }
 
-    if (!$block_plugin->access(\Drupal::currentUser())) {
-      return;
+    $build = [];
+    $access = $block_plugin->access(\Drupal::currentUser(), TRUE);
+    if ($access->isAllowed()) {
+      // Title block needs special treatment.
+      if ($block_plugin instanceof TitleBlockPluginInterface) {
+        $request = \Drupal::request();
+        $route_match = \Drupal::routeMatch();
+        $title = \Drupal::service('title_resolver')->getTitle($request, $route_match->getRouteObject());
+        $block_plugin->setTitle($title);
+      }
+
+      $build['content'] = $block_plugin->build();
+
+      if ($block_plugin instanceof TitleBlockPluginInterface) {
+        $build['content']['#cache']['contexts'][] = 'url';
+      }
+
+      if ($wrapper && !Element::isEmpty($build['content'])) {
+        $build += [
+          '#theme' => 'block',
+          '#attributes' => [],
+          '#contextual_links' => [],
+          '#configuration' => $block_plugin->getConfiguration(),
+          '#plugin_id' => $block_plugin->getPluginId(),
+          '#base_plugin_id' => $block_plugin->getBaseId(),
+          '#derivative_plugin_id' => $block_plugin->getDerivativeId(),
+        ];
+      }
     }
 
-    // Title block needs special treatment.
-    if ($block_plugin instanceof TitleBlockPluginInterface) {
-      $request = \Drupal::request();
-      $route_match = \Drupal::routeMatch();
-      $title = \Drupal::service('title_resolver')->getTitle($request, $route_match->getRouteObject());
-      $block_plugin->setTitle($title);
-    }
-
-    $build = [
-      'content' => $block_plugin->build(),
-      '#cache' => [
-        'contexts' => $block_plugin->getCacheContexts(),
-        'tags' => $block_plugin->getCacheTags(),
-        'max-age' => $block_plugin->getCacheMaxAge(),
-      ],
-    ];
-
-    if ($block_plugin instanceof TitleBlockPluginInterface) {
-      $build['#cache']['contexts'][] = 'url';
-    }
-
-    if ($wrapper && !Element::isEmpty($build['content'])) {
-      $build += [
-        '#theme' => 'block',
-        '#attributes' => [],
-        '#contextual_links' => [],
-        '#configuration' => $block_plugin->getConfiguration(),
-        '#plugin_id' => $block_plugin->getPluginId(),
-        '#base_plugin_id' => $block_plugin->getBaseId(),
-        '#derivative_plugin_id' => $block_plugin->getDerivativeId(),
-      ];
-    }
+    CacheableMetadata::createFromRenderArray($build)
+      ->merge(CacheableMetadata::createFromObject($access))
+      ->applyTo($build);
 
     return $build;
   }
@@ -202,6 +201,7 @@ class TwigExtension extends \Twig_Extension {
    *   A render array to display the region content.
    */
   public function drupalRegion($region, $theme = NULL) {
+
     $entity_type_manager = \Drupal::entityTypeManager();
     $blocks = $entity_type_manager->getStorage('block')->loadByProperties([
       'region' => $region,
@@ -212,9 +212,13 @@ class TwigExtension extends \Twig_Extension {
 
     $build = [];
 
+    $cache_metadata = new CacheableMetadata();
+
     /* @var $blocks \Drupal\block\BlockInterface[] */
     foreach ($blocks as $id => $block) {
-      if ($block->access('view')) {
+      $access = $block->access('view', NULL, TRUE);
+      $cache_metadata = $cache_metadata->merge(CacheableMetadata::createFromObject($access));
+      if ($access->isAllowed()) {
         $block_plugin = $block->getPlugin();
         if ($block_plugin instanceof TitleBlockPluginInterface) {
           $request = \Drupal::request();
@@ -229,6 +233,7 @@ class TwigExtension extends \Twig_Extension {
     if ($build) {
       $build['#region'] = $region;
       $build['#theme_wrappers'] = ['region'];
+      $cache_metadata->applyTo($build);
     }
 
     return $build;
@@ -274,10 +279,23 @@ class TwigExtension extends \Twig_Extension {
       @trigger_error('Loading entities from route is deprecated in Twig Tweak 2.4 and will not be supported in Twig Tweak 3.0', E_USER_DEPRECATED);
       $entity = \Drupal::routeMatch()->getParameter($entity_type);
     }
-    if ($entity && (!$check_access || $entity->access('view'))) {
-      $render_controller = $entity_type_manager->getViewBuilder($entity_type);
-      return $render_controller->view($entity, $view_mode, $langcode);
+
+    $build = [];
+
+    if ($entity) {
+      $access = $check_access ? $entity->access('view', NULL, TRUE) : AccessResult::allowed();
+      if ($access->isAllowed()) {
+        $build = $entity_type_manager
+          ->getViewBuilder($entity_type)
+          ->view($entity, $view_mode, $langcode);
+      }
+      CacheableMetadata::createFromRenderArray($build)
+        ->merge(CacheableMetadata::createFromObject($entity))
+        ->merge(CacheableMetadata::createFromObject($access))
+        ->applyTo($build);
     }
+
+    return $build;
   }
 
   /**
@@ -320,9 +338,21 @@ class TwigExtension extends \Twig_Extension {
       $entity = $entity_storage->create($values);
       $operation = 'create';
     }
-    if ($entity && (!$check_access || $entity->access($operation))) {
-      return \Drupal::service('entity.form_builder')->getForm($entity, $form_mode);
+
+    $build = [];
+
+    if ($entity) {
+      $access = $check_access ? $entity->access($operation, NULL, TRUE) : AccessResult::allowed();
+      if ($access->isAllowed()) {
+        $build = \Drupal::service('entity.form_builder')->getForm($entity, $form_mode);
+      }
+      CacheableMetadata::createFromRenderArray($build)
+        ->merge(CacheableMetadata::createFromObject($entity))
+        ->merge(CacheableMetadata::createFromObject($access))
+        ->applyTo($build);
     }
+
+    return $build;
   }
 
   /**
@@ -352,20 +382,36 @@ class TwigExtension extends \Twig_Extension {
    *   A render array for the field or NULL if the value does not exist.
    */
   public function drupalField($field_name, $entity_type, $id = NULL, $view_mode = 'default', $langcode = NULL, $check_access = TRUE) {
+    $entity_type_manager = \Drupal::entityTypeManager();
+
     if ($id) {
-      $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($id);
+      $entity = $entity_type_manager->getStorage($entity_type)->load($id);
     }
     else {
       @trigger_error('Loading entities from route is deprecated in Twig Tweak 2.4 and will not be supported in Twig Tweak 3.0', E_USER_DEPRECATED);
       $entity = \Drupal::routeMatch()->getParameter($entity_type);
     }
-    if ($entity && (!$check_access || $entity->access('view'))) {
-      $entity = \Drupal::service('entity.repository')
-        ->getTranslationFromContext($entity, $langcode);
-      if (isset($entity->{$field_name})) {
-        return $entity->{$field_name}->view($view_mode);
+
+    $build = [];
+
+    if ($entity) {
+      $access = $check_access ? $entity->access('view', NULL, TRUE) : AccessResult::allowed();
+      if ($access->isAllowed()) {
+        $entity = \Drupal::service('entity.repository')
+          ->getTranslationFromContext($entity, $langcode);
+        if (!isset($entity->{$field_name})) {
+          // @todo Trigger error here.
+          return;
+        }
+        $build = $entity->{$field_name}->view($view_mode);
       }
+      CacheableMetadata::createFromRenderArray($build)
+        ->merge(CacheableMetadata::createFromObject($access))
+        ->merge(CacheableMetadata::createFromObject($entity))
+        ->applyTo($build);
     }
+
+    return $build;
   }
 
   /**
@@ -490,35 +536,38 @@ class TwigExtension extends \Twig_Extension {
       ->getStorage('file')
       ->loadByProperties([$property_type => $property]);
 
-    // To avoid ambiguity render nothing unless exact one image was found.
+    $build = [];
+
+    // To avoid ambiguity render nothing unless exact one image has been found.
     if (count($files) != 1) {
-      return;
+      return $build;
     }
 
     $file = reset($files);
 
-    if ($check_access && !$file->access('view')) {
-      return;
-    }
+    $access = $check_access ? $file->access('view', NULL, TRUE) : AccessResult::allowed();
 
-    $build = [
-      '#uri' => $file->getFileUri(),
-      '#attributes' => $attributes,
-    ];
-
-    if ($style) {
-      if ($responsive) {
-        $build['#type'] = 'responsive_image';
-        $build['#responsive_image_style_id'] = $style;
+    if ($access->isAllowed()) {
+      $build['#uri'] = $file->getFileUri();
+      $build['#attributes'] = $attributes;
+      if ($style) {
+        if ($responsive) {
+          $build['#type'] = 'responsive_image';
+          $build['#responsive_image_style_id'] = $style;
+        }
+        else {
+          $build['#theme'] = 'image_style';
+          $build['#style_name'] = $style;
+        }
       }
       else {
-        $build['#theme'] = 'image_style';
-        $build['#style_name'] = $style;
+        $build['#theme'] = 'image';
       }
     }
-    else {
-      $build['#theme'] = 'image';
-    }
+
+    CacheableMetadata::createFromRenderArray($build)
+      ->merge(CacheableMetadata::createFromObject($access))
+      ->applyTo($build);
 
     return $build;
   }
@@ -637,8 +686,8 @@ class TwigExtension extends \Twig_Extension {
    * @param bool $check_access
    *   (optional) Indicates that access check is required.
    *
-   * @return \Drupal\Core\Url
-   *   A new Url object based on user input.
+   * @return \Drupal\Core\Url|null
+   *   A new Url object or null if the URL is not accessible.
    *
    * @see \Drupal\Core\Url::fromUserInput()
    */
@@ -679,8 +728,8 @@ class TwigExtension extends \Twig_Extension {
    * @param bool $check_access
    *   (optional) Indicates that access check is required.
    *
-   * @return \Drupal\Core\Link
-   *   A new Link object.
+   * @return \Drupal\Core\Link|null
+   *   A new Link object or null of the URL is not accessible.
    *
    * @see \Drupal\Core\Link::fromTextAndUrl()
    */
@@ -991,20 +1040,30 @@ class TwigExtension extends \Twig_Extension {
    *   (optional) For which language the entity should be rendered, defaults to
    *   the current content language.
    * @param bool $check_access
-   *   (optional) Indicates that access check is required.
+   *   (optional) Indicates that access check for an entity is required.
    *
    * @return array
    *   A render array to represent the object.
    */
   public function view($object, $display_options = 'default', $langcode = NULL, $check_access = TRUE) {
+    $build = [];
     if ($object instanceof FieldItemListInterface || $object instanceof FieldItemInterface) {
       return $object->view($display_options);
     }
-    elseif ($object instanceof EntityInterface && (!$check_access || $object->access('view'))) {
-      return \Drupal::entityTypeManager()
-        ->getViewBuilder($object->getEntityTypeId())
-        ->view($object, $display_options, $langcode);
+    elseif ($object instanceof EntityInterface) {
+      $build = [];
+      $access = $check_access ? $object->access('view', NULL, TRUE) : AccessResult::allowed();
+      if ($access->isAllowed()) {
+        $build = \Drupal::entityTypeManager()
+          ->getViewBuilder($object->getEntityTypeId())
+          ->view($object, $display_options, $langcode);
+      }
+      CacheableMetadata::createFromRenderArray($build)
+        ->merge(CacheableMetadata::createFromObject($object))
+        ->merge(CacheableMetadata::createFromObject($access))
+        ->applyTo($build);
     }
+    return $build;
   }
 
   /**
