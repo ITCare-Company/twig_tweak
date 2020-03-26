@@ -2,10 +2,11 @@ name: Twig tweak test
 type: module
 description: Support module for Twig tweak testing.
 package: Testing
-core: 8.x
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9
 dependencies:
-  - drupal:system (>= 8.7.0)
-  - drupal:node
+  - drupal:system (>= 9.0)
+  - drupal:block
   - drupal:media
+  - drupal:node
+  - drupal:path
   - drupal:twig_tweak
