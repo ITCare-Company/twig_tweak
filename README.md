@@ -1,7 +1,13 @@
-## SUMMARY
+# Twig Tweak
 
-Twig Tweak module provides a Twig extension with some useful functions and
-filters.
+The  module provides a Twig extension with some useful functions and filters.
+
+## Installation
+Install as usual.
+```shell
+composer require drupal/twig_tweak
+drush en twig_tweak
+```
 
 ## Usage
 
@@ -12,13 +18,13 @@ filters.
 
 ### Drupal View Result
 ```twig
-{{ drupal_view('who_s_new', 'block_1') }}
+{{ drupal_view_result('who_s_new', 'block_1') }}
 ```
 
 ### Drupal Block
 In order to list all registered plugin IDs fetch them with block plugin manager.
 With Drush it can be done like follows:
-```
+```shell
 drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefinitions()));"
 ```
 
@@ -27,7 +33,7 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 {{ drupal_block('system_branding_block') }}
 
 {# Print block using custom configuration. #}
-{{ drupal_block('system_branding_block', {label: 'Branding', use_site_name: false})
+{{ drupal_block('system_branding_block', {label: 'Branding', use_site_name: false}) }}
 
 {# Bypass block.html.twig theming. #}
 {{ drupal_block('system_branding_block', wrapper=false) }}
@@ -38,10 +44,10 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 ### Drupal Region
 
 ```twig
-{# Print 'Sidebar First' region of the default site theme. #}
+{# Print 'sidebar_first' region of the default site theme. #}
 {{ drupal_region('sidebar_first') }}
 
-{# Print 'Sidebar First' region of Bartik theme. #}
+{# Print 'sidebar_first' region of Bartik theme. #}
 {{ drupal_region('sidebar_first', 'bartik') }}
 ```
 
@@ -63,7 +69,7 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 {# Print edit form for node 1. #}
 {{ drupal_entity_form('node', 1) }}
 
-{# Print add form for Article content type. #}
+{# Print add form for 'article' content type. #}
 {{ drupal_entity_form('node', values={type: 'article'}) }}
 
 {# Print user register form. #}
@@ -79,7 +85,11 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 
 ### Drupal Menu
 ```twig
+{# Print the top level of 'main' menu. #}
 {{ drupal_menu('main') }}
+
+{# Expand all menu links. #}
+{{ drupal_menu('main', expand=true) }}
 ```
 
 ### Drupal Form
@@ -131,6 +141,7 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 
 ### Drupal Title
 ```twig
+{# The title is cached per URL. #}
 {{ drupal_title() }}
 ```
 
@@ -165,6 +176,7 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 
 ### Drupal Breakpoint
 ```twig
+{# Make Xdebug break on the specific line in the compiled Twig template. #}
 {{ drupal_breakpoint() }}
 ```
 
@@ -210,7 +222,6 @@ Twig filters.
 ```twig
 {{ 'Привет!'|transliterate }}
 ```
-new TwigFilter('transliterate', [self::class, 'transliterateFilter']),
 
 ### Check Markup
 ```twig
@@ -219,6 +230,10 @@ new TwigFilter('transliterate', [self::class, 'transliterateFilter']),
 
 ### Truncate
 ```twig
+{# Truncates a UTF-8-encoded string safely to 10 characters. #}
+{{ 'Some long text'|truncate(10) }}
+
+{# Same as above but with respect of words boundary. #}
 {{ 'Some long text'|truncate(10, true) }}
 ```
 
@@ -235,6 +250,7 @@ new TwigFilter('transliterate', [self::class, 'transliterateFilter']),
 ```
 
 ### With
+This is an opposite of core `without` filter.
 ```twig
 {# Set top level value. #}
 {{ content.field_image|with('#title', 'Photo'|t) }}
@@ -274,7 +290,7 @@ Media fields are fully supported including OEmbed resources.
 ### PHP
 PHP filter is disabled by default. You can enable it in settings.php file as
 follows:
-```twug
+```php
 $settings['twig_tweak_enable_php_filter'] = TRUE;
 ```
 
@@ -283,12 +299,12 @@ $settings['twig_tweak_enable_php_filter'] = TRUE;
 ```
 
 Using PHP filter is discouraged as it may cause security implications. In fact
-it is very rarely needed. The above code can be replaced with following.
+it is very rarely needed. The above code can be replaced with the following.
 ```twig
 {{ 'now'|date('Y') }}
 ```
 
 ## LINKS
-Project page: https://www.drupal.org/project/twig_tweak
-Twig home page: http://twig.sensiolabs.org
-Drupal 8 Twig documentation: https://www.drupal.org/docs/8/theming/twig
+* Project page: https://www.drupal.org/project/twig_tweak
+* Twig home page: https://twig.sensiolabs.org
+* Drupal 8 Twig documentation: https://www.drupal.org/docs/8/theming/twig
