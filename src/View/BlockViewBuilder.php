@@ -147,7 +147,14 @@ class BlockViewBuilder {
 
     CacheableMetadata::createFromRenderArray($build)
       ->merge(CacheableMetadata::createFromObject($access))
+      ->merge(CacheableMetadata::createFromObject($block_plugin))
       ->applyTo($build);
+
+    if (!isset($build['#cache']['keys'])) {
+      $configuration['_wrapper'] = $wrapper;
+      $configuration_hash = hash('sha256', serialize($configuration));
+      $build['#cache']['keys'] = ['twig_tweak_block', $id, $configuration_hash];
+    }
 
     return $build;
   }
