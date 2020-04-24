@@ -258,14 +258,14 @@ final class TwigTweakTest extends BrowserTestBase {
     $url = Url::fromUserInput('/node/1/edit', ['absolute' => TRUE]);
     $link = Link::fromTextAndUrl('Edit', $url)->toString();
     $xpath = '//div[@class = "tt-link"]';
-    self::assertEquals($link, trim($this->xpath($xpath)[0]->getHtml()));
+    self::assertEquals($link, $this->xpath($xpath)[0]->getHtml());
 
     // -- Link with HTML.
     $text = Markup::create('<b>Edit</b>');
     $url = Url::fromUserInput('/node/1/edit', ['absolute' => TRUE]);
     $link = Link::fromTextAndUrl($text, $url)->toString();
     $xpath = '//div[@class = "tt-link-html"]';
-    self::assertEquals($link, trim($this->xpath($xpath)[0]->getHtml()));
+    self::assertEquals($link, $this->xpath($xpath)[0]->getHtml());
 
     // -- Status messages.
     $xpath = '//div[@class = "tt-messages"]//div[contains(@class, "messages--status") and contains(., "Hello world!")]';
@@ -277,7 +277,7 @@ final class TwigTweakTest extends BrowserTestBase {
 
     // -- Protected link.
     $xpath = '//div[@class = "tt-link-access"]';
-    self::assertEquals('', trim($this->xpath($xpath)[0]->getHtml()));
+    self::assertSame('', $this->xpath($xpath)[0]->getHtml());
 
     // -- Token replacement.
     $xpath = '//div[@class = "tt-token-replace" and text() = "Site name: Drupal"]';
@@ -308,7 +308,7 @@ final class TwigTweakTest extends BrowserTestBase {
 
     // -- Text format.
     $xpath = '//div[@class = "tt-check-markup"]';
-    self::assertEquals('<b>bold</b> strong', trim($this->xpath($xpath)[0]->getHtml()));
+    self::assertSame('<b>bold</b> strong', $this->xpath($xpath)[0]->getHtml());
 
     // -- Format size.
     $xpath = '//div[@class = "tt-format-size"]';

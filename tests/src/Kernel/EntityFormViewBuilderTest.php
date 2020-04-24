@@ -80,7 +80,7 @@ final class EntityFormViewBuilderTest extends KernelTestBase {
       'max-age' => 50,
     ];
     self::assertSame($expected_cache, $build['#cache']);
-    self::assertContains('<form class="node-article-form node-form" ', $this->renderPlain($build));
+    self::assertStringContainsString('<form class="node-article-form node-form" ', $this->renderPlain($build));
 
     // -- Private node with access check.
     $build = $view_builder->build($private_node);
@@ -115,7 +115,7 @@ final class EntityFormViewBuilderTest extends KernelTestBase {
       'max-age' => Cache::PERMANENT,
     ];
     self::assertSame($expected_cache, $build['#cache']);
-    self::assertContains('<form class="node-article-form node-form" ', $this->renderPlain($build));
+    self::assertStringContainsString('<form class="node-article-form node-form" ', $this->renderPlain($build));
   }
 
   /**
