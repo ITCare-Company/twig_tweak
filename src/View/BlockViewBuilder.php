@@ -151,9 +151,12 @@ class BlockViewBuilder {
       ->applyTo($build);
 
     if (!isset($build['#cache']['keys'])) {
-      $configuration['_wrapper'] = $wrapper;
-      $configuration_hash = hash('sha256', serialize($configuration));
-      $build['#cache']['keys'] = ['twig_tweak_block', $id, $configuration_hash];
+      $build['#cache']['keys'] = [
+        'twig_tweak_block',
+        $id,
+        '[configuration]=' . hash('sha256', serialize($configuration)),
+        '[wrapper]=' . (int) $wrapper,
+      ];
     }
 
     return $build;
