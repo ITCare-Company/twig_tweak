@@ -64,7 +64,19 @@ class MenuViewBuilder {
       ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
     ];
     $tree = $this->menuLinkTree->transform($tree, $manipulators);
-    return $this->menuLinkTree->build($tree);
+    $build = $this->menuLinkTree->build($tree);
+
+    if (!isset($build['#cache']['keys'])) {
+      $build['#cache']['keys'] = [
+        'twig_tweak_menu',
+        $menu_name,
+        '[level]=' . $level,
+        '[depth]=' . $depth,
+        '[expand]=' . (int) $expand,
+      ];
+    }
+
+    return $build;
   }
 
 }
