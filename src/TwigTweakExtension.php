@@ -564,7 +564,7 @@ class TwigTweakExtension extends AbstractExtension {
   }
 
   /**
-   * Extracts file URL form content entity.
+   * Extracts file URL from content entity.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Entity object that contains information about the file.
