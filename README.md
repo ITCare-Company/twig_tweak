@@ -228,6 +228,11 @@ Twig filters.
 {{ '<b>bold</b> <strong>strong</strong>'|check_markup('restricted_html') }}
 ```
 
+### Format size
+```twig
+{{ 12345|format_size() }}
+```
+
 ### Truncate
 ```twig
 {# Truncates a UTF-8-encoded string safely to 10 characters. #}

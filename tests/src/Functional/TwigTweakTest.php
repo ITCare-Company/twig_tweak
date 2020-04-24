@@ -310,6 +310,10 @@ final class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-check-markup"]';
     self::assertEquals('<b>bold</b> strong', trim($this->xpath($xpath)[0]->getHtml()));
 
+    // -- Format size.
+    $xpath = '//div[@class = "tt-format-size"]';
+    self::assertSame('12.06 KB', $this->xpath($xpath)[0]->getHtml());
+
     // -- Truncate.
     $xpath = '//div[@class = "tt-truncate" and text() = "Hello…"]';
     $this->assertXpath($xpath);

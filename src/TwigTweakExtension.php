@@ -80,6 +80,7 @@ class TwigTweakExtension extends AbstractExtension {
       new TwigFilter('image_style', [self::class, 'imageStyleFilter']),
       new TwigFilter('transliterate', [self::class, 'transliterateFilter']),
       new TwigFilter('check_markup', 'check_markup'),
+      new TwigFilter('format_size', 'format_size'),
       new TwigFilter('truncate', [Unicode::class, 'truncate']),
       new TwigFilter('view', [self::class, 'viewFilter']),
       new TwigFilter('with', [self::class, 'withFilter']),
