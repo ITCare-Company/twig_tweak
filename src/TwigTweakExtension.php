@@ -407,7 +407,7 @@ class TwigTweakExtension extends AbstractExtension {
   /**
    * Returns the URL of this image derivative for an original image path or URI.
    *
-   * @param string $path
+   * @param string|null $path
    *   The path or URI to the original image.
    * @param string $style
    *   The image style.
@@ -416,7 +416,12 @@ class TwigTweakExtension extends AbstractExtension {
    *   The absolute URL where a style image can be downloaded, suitable for use
    *   in an <img> tag. Requesting the URL will cause the image to be created.
    */
-  public static function imageStyleFilter(string $path, string $style): ?string {
+  public static function imageStyleFilter(?string $path, string $style): ?string {
+
+    if (!$path) {
+      trigger_error('Image path is empty.');
+      return NULL;
+    }
 
     if (!$image_style = ImageStyle::load($style)) {
       trigger_error(sprintf('Could not load image style %s.', $style));
