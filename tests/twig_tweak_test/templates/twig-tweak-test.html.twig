@@ -89,4 +89,7 @@
   <div class="tt-file-url-from-image-field">{{ node.field_image|file_url }}</div>
   <div class="tt-file-url-from-image-field-delta">{{ node.field_image[0]|file_url }}</div>
   <div class="tt-file-url-from-media-field">{{ node.field_media|file_url }}</div>
+  <div class="tt-functions_alter">{{ foo('bar') }}</div>
+  <div class="tt-filters_alter">{{ 'foo'|bar }}</div>
+  <div class="tt-tests_alter">{{ 'ok' is ok ? 'Yes' : 'No' }}</div>
 </div>

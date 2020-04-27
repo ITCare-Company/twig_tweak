@@ -11,6 +11,9 @@ use Drupal\Core\Access\AccessResultInterface;
 use Drupal\file\FileInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
+use Twig\TwigTest;
 
 /**
  * Implements hook_page_bottom().
@@ -71,4 +74,31 @@ function twig_tweak_test_file_access(FileInterface $file): AccessResultInterface
   $result->addCacheTags(['tag_for_' . $file->getFileUri()]);
   $result->setCacheMaxAge(70);
   return $result;
+}
+
+/**
+ * Implements hook_twig_tweak_functions_alter().
+ */
+function twig_tweak_test_twig_tweak_functions_alter(array &$functions) {
+  $functions[] = new TwigFunction('foo', function (string $value): string {
+    return "-=$value=-";
+  });
+}
+
+/**
+ * Implements hook_twig_tweak_filters_alter().
+ */
+function twig_tweak_test_twig_tweak_filters_alter(array &$filters) {
+  $filters[] = new TwigFilter('bar', function (string $input): string {
+    return str_replace('foo', 'bar', $input);
+  });
+}
+
+/**
+ * Implements hook_twig_tweak_tests_alter().
+ */
+function twig_tweak_test_twig_tweak_tests_alter(array &$tests) {
+  $tests[] = new TwigTest('ok', function ($input): bool {
+    return $input == 'ok';
+  });
 }

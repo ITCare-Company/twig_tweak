@@ -6,6 +6,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -14,6 +15,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
@@ -36,13 +38,35 @@ use Twig\TwigFunction;
 class TwigTweakExtension extends AbstractExtension {
 
   /**
+   * The module handler to invoke alter hooks.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * The theme manager to invoke alter hooks.
+   *
+   * @var \Drupal\Core\Theme\ThemeManagerInterface
+   */
+  protected $themeManager;
+
+  /**
+   * Constructs the TwigTweakExtension object.
+   */
+  public function __construct(ModuleHandlerInterface $module_handler, ThemeManagerInterface $theme_manager) {
+    $this->moduleHandler = $module_handler;
+    $this->themeManager = $theme_manager;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getFunctions(): array {
     $context_options = ['needs_context' => TRUE];
     $all_options = ['needs_environment' => TRUE, 'needs_context' => TRUE];
 
-    return [
+    $functions = [
       new TwigFunction('drupal_view', 'views_embed_view'),
       new TwigFunction('drupal_view_result', 'views_get_view_result'),
       new TwigFunction('drupal_block', [self::class, 'drupalBlock']),
@@ -67,6 +91,11 @@ class TwigTweakExtension extends AbstractExtension {
       new TwigFunction('drupal_breakpoint', [self::class, 'drupalBreakpoint'], $all_options),
       new TwigFunction('drupal_contextual_links', [self::class, 'drupalContextualLinks']),
     ];
+
+    $this->moduleHandler->alter('twig_tweak_functions', $functions);
+    $this->themeManager->alter('twig_tweak_functions', $functions);
+
+    return $functions;
   }
 
   /**
@@ -92,7 +121,22 @@ class TwigTweakExtension extends AbstractExtension {
       $filters[] = new TwigFilter('php', [self::class, 'phpFilter']);
     }
 
+    $this->moduleHandler->alter('twig_tweak_filters', $filters);
+    $this->themeManager->alter('twig_tweak_filters', $filters);
+
     return $filters;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTests(): array {
+    $tests = [];
+
+    $this->moduleHandler->alter('twig_tweak_tests', $tests);
+    $this->themeManager->alter('twig_tweak_tests', $tests);
+
+    return $tests;
   }
 
   /**

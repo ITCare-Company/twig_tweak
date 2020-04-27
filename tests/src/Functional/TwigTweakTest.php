@@ -358,6 +358,18 @@ final class TwigTweakTest extends BrowserTestBase {
     // -- File URL from media field.
     $xpath = '//div[@class = "tt-file-url-from-media-field" and contains(text(), "/files/image-1.png")]';
     $this->assertXpath($xpath);
+
+    // -- Hook twig_tweak_functions_alter().
+    $xpath = '//div[@class = "tt-functions_alter" and text() = "-=bar=-"]';
+    $this->assertXpath($xpath);
+
+    // -- Hook twig_tweak_filters_alter().
+    $xpath = '//div[@class = "tt-filters_alter" and text() = "bar"]';
+    $this->assertXpath($xpath);
+
+    // -- Hook twig_tweak_tests_alter().
+    $xpath = '//div[@class = "tt-tests_alter" and text() = "Yes"]';
+    $this->assertXpath($xpath);
   }
 
   /**
