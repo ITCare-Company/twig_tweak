@@ -53,9 +53,9 @@ class FieldViewBuilder {
 
     $build = [];
 
+    $entity = $this->entityRepository->getTranslationFromContext($entity, $langcode);
     $access = $check_access ? $entity->access('view', NULL, TRUE) : AccessResult::allowed();
     if ($access->isAllowed()) {
-      $entity = $this->entityRepository->getTranslationFromContext($entity, $langcode);
       if (!isset($entity->{$field_name})) {
         // @todo Trigger error here.
         return [];
