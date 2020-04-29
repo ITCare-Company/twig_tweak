@@ -46,6 +46,7 @@ final class BlockViewBuilderTest extends KernelTestBase {
         ],
       ],
       '#theme' => 'block',
+      '#id' => 'twig_tweak_test_foo',
       '#attributes' => [],
       '#contextual_links' => [],
       '#configuration' => [
@@ -71,21 +72,28 @@ final class BlockViewBuilderTest extends KernelTestBase {
       ],
     ];
     self::assertSame($expected_build, $build);
-    self::assertSame('<div>Foo</div>', $this->renderPlain($build));
+    self::assertSame('<div id="block-twig-tweak-test-foo">Foo</div>', $this->renderPlain($build));
 
     // -- Non-default configuration.
-    $build = $view_builder->build('twig_tweak_test_foo', ['content' => 'Bar', 'label' => 'Example']);
+    $configuration = [
+      'content' => 'Bar',
+      'label' => 'Example',
+      'id' => 'example',
+    ];
+    $build = $view_builder->build('twig_tweak_test_foo', $configuration);
     $expected_build['content']['#markup'] = 'Bar';
     $expected_build['#configuration']['label'] = 'Example';
     $expected_build['#configuration']['content'] = 'Bar';
+    $expected_build['#configuration']['id'] = 'example';
+    $expected_build['#id'] = 'example';
     $expected_build['#cache']['keys'] = [
       'twig_tweak_block',
       'twig_tweak_test_foo',
-      '[configuration]=373b0811b355fa153ac8934c897a021697ff6e848f00b85e711d36212b77a958',
+      '[configuration]=8e53716fcf7e5d5c45effd55e9b2a267bbaf333f7253766f572d58e4f7991b36',
       '[wrapper]=1',
     ];
     self::assertSame($expected_build, $build);
-    self::assertSame('<div><h2>Example</h2>Bar</div>', $this->renderPlain($build));
+    self::assertSame('<div id="block-example"><h2>Example</h2>Bar</div>', $this->renderPlain($build));
 
     // -- Without wrapper.
     $build = $view_builder->build('twig_tweak_test_foo', [], FALSE);

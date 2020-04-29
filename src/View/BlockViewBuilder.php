@@ -135,6 +135,7 @@ class BlockViewBuilder {
       if ($wrapper && !Element::isEmpty($build['content'])) {
         $build += [
           '#theme' => 'block',
+          '#id' => $configuration['id'] ?? $id,
           '#attributes' => [],
           '#contextual_links' => [],
           '#configuration' => $block_plugin->getConfiguration(),
