@@ -273,6 +273,26 @@ This is an opposite of core `without` filter.
 </ul>
 ```
 
+### File URI
+When field item list passed the URI will be extracted from the first item. In
+order to get URI of specific item specify its delta explicitly using array
+notation.
+```twig
+{{ node.field_image|file_uri }}
+{{ node.field_image[0]|file_uri }}
+```
+
+Media fields are fully supported including OEmbed resources, in which case
+it will return the URL to the resource, similar to the `file_url` filter.
+```twig
+{{ node.field_media|file_uri }}
+```
+
+Useful to apply the `image_style` filter to Media fields.
+```twig
+{{ node.field_media|file_uri|image_style('thumbnail') }}
+```
+
 ### File URL
 For string arguments it works similar to core `file_url()` Twig function.
 ```twig

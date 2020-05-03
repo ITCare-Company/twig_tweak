@@ -114,6 +114,7 @@ class TwigTweakExtension extends AbstractExtension {
       new TwigFilter('view', [self::class, 'viewFilter']),
       new TwigFilter('with', [self::class, 'withFilter']),
       new TwigFilter('children', [self::class, 'childrenFilter']),
+      new TwigFilter('file_uri', [self::class, 'fileUriFilter']),
       new TwigFilter('file_url', [self::class, 'fileUrlFilter']),
     ];
 
@@ -571,6 +572,30 @@ class TwigTweakExtension extends AbstractExtension {
   }
 
   /**
+   * Returns a URI to the file.
+   *
+   * @param object $input
+   *   An object that contains the URI.
+   *
+   * @return string|null
+   *   A URI that may be used to access the file.
+   */
+  public static function fileUriFilter($input): ?string {
+    if ($input instanceof EntityReferenceFieldItemListInterface) {
+      $referenced_entities = $input->referencedEntities();
+      if (isset($referenced_entities[0])) {
+        return self::getUriFromEntity($referenced_entities[0]);
+      }
+    }
+    elseif ($input instanceof EntityReferenceItem) {
+      return self::getUriFromEntity($input->entity);
+    }
+    elseif ($input instanceof EntityInterface) {
+      return self::getUriFromEntity($input);
+    }
+  }
+
+  /**
    * Returns a URL path to the file.
    *
    * @param string|object $input
@@ -611,6 +636,31 @@ class TwigTweakExtension extends AbstractExtension {
     $output = ob_get_contents();
     ob_end_clean();
     return $output;
+  }
+
+  /**
+   * Extracts file URI from content entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entity object that contains information about the file.
+   *
+   * @return string|null
+   *   A URI that may be used to access the file.
+   */
+  private static function getUriFromEntity(EntityInterface $entity): ?string {
+    if ($entity instanceof MediaInterface) {
+      $source = $entity->getSource();
+      $value = $source->getSourceFieldValue($entity);
+      if ($source instanceof OEmbedInterface) {
+        return $value;
+      }
+      elseif ($file = File::load($value)) {
+        return $file->getFileUri();
+      }
+    }
+    elseif ($entity instanceof FileInterface) {
+      return $entity->getFileUri();
+    }
   }
 
   /**

@@ -62,6 +62,7 @@
   <div class="tt-token-replace">{{ 'Site name: [site:name]'|token_replace }}</div>
   <div class="tt-preg-replace">{{ 'FOO'|preg_replace('/(foo)/i', '$1-bar') }}</div>
   <div class="tt-image-style">{{ 'public://images/ocean.jpg'|image_style('thumbnail') }}</div>
+  <div class="tt-image-style-from-file-uri-from-media-field">{{ node.field_media|file_uri|image_style('thumbnail') }}</div>
   <div class="tt-transliterate">{{ 'Привет!'|transliterate('ru') }}</div>
   <div class="tt-check-markup">{{ '<b>bold</b> <strong>strong</strong>'|check_markup('twig_tweak_test') }}</div>
   <div class="tt-format-size">{{ 12345|format_size() }}</div>
@@ -85,6 +86,9 @@
   <div class="tt-node-view">{{ node|view }}</div>
   <div class="tt-field-list-view">{{ node.title|view }}</div>
   <div class="tt-field-item-view">{{ node.title[0]|view }}</div>
+  <div class="tt-file-uri-from-image-field">{{ node.field_image|file_uri }}</div>
+  <div class="tt-file-uri-from-image-field-delta">{{ node.field_image[0]|file_uri }}</div>
+  <div class="tt-file-uri-from-media-field">{{ node.field_media|file_uri }}</div>
   <div class="tt-file-url-from-uri">{{ 'public://image-test.png'|file_url }}</div>
   <div class="tt-file-url-from-image-field">{{ node.field_image|file_url }}</div>
   <div class="tt-file-url-from-image-field-delta">{{ node.field_image[0]|file_url }}</div>
