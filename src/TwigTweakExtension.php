@@ -119,7 +119,7 @@ class TwigTweakExtension extends AbstractExtension {
     ];
 
     if (Settings::get('twig_tweak_enable_php_filter')) {
-      $filters[] = new TwigFilter('php', [self::class, 'phpFilter']);
+      $filters[] = new TwigFilter('php', [self::class, 'phpFilter'], ['needs_context' => TRUE]);
     }
 
     $this->moduleHandler->alter('twig_tweak_filters', $filters);
@@ -622,17 +622,20 @@ class TwigTweakExtension extends AbstractExtension {
   /**
    * Evaluates a string of PHP code.
    *
+   * @param array $context
+   *   Twig context.
    * @param string $code
    *   Valid PHP code to be evaluated.
    *
    * @return mixed
    *   The eval() result.
    */
-  public static function phpFilter(string $code) {
+  public static function phpFilter(array $context, string $code) {
+    // Make Twig variables available in PHP code.
+    extract($context);
     ob_start();
-    // @codingStandardsIgnoreStart
+    // phpcs:ignore Drupal.Functions.DiscouragedFunctions.Discouraged
     print eval($code);
-    // @codingStandardsIgnoreEnd
     $output = ob_get_contents();
     ob_end_clean();
     return $output;
