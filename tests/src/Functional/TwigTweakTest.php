@@ -302,10 +302,6 @@ final class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-image-style" and contains(text(), "styles/thumbnail/public/images/ocean.jpg")]';
     $this->assertXpath($xpath);
 
-    // -- Image style from File URI from media field.
-    $xpath = '//div[@class = "tt-image-style-from-file-uri-from-media-field" and contains(text(), "styles/thumbnail/public/image-1.png")]';
-    $this->assertXpath($xpath);
-
     // -- Transliterate.
     $xpath = '//div[@class = "tt-transliterate" and contains(text(), "Privet!")]';
     $this->assertXpath($xpath);
@@ -357,6 +353,10 @@ final class TwigTweakTest extends BrowserTestBase {
 
     // -- File URI from media field.
     $xpath = '//div[@class = "tt-file-uri-from-media-field" and contains(text(), "public://image-1.png")]';
+    $this->assertXpath($xpath);
+
+    // -- Image style from File URI from media field.
+    $xpath = '//div[@class = "tt-image-style-from-file-uri-from-media-field" and contains(text(), "styles/thumbnail/public/image-1.png")]';
     $this->assertXpath($xpath);
 
     // -- File URL from URI.

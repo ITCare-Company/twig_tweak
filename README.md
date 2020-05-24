@@ -215,8 +215,17 @@ Twig filters.
 
 ### Image Style
 ```twig
+{# Basic usage #}
 {{ 'public://images/ocean.jpg'|image_style('thumbnail') }}
+
+{# Make sure to check that the URI is valid #}
+{% set image_uri = node.field_media_optional_image|file_uri %}
+{% if image_uri is not null %}
+  {{ image_uri|image_style('thumbnail') }}
+{% endif %}
 ```
+`image_style` will trigger an error on invalid or empty URIs, to avoid broken
+images when used in an `<img>` tag.
 
 ### Transliterate
 ```twig
@@ -286,11 +295,6 @@ Media fields are fully supported including OEmbed resources, in which case
 it will return the URL to the resource, similar to the `file_url` filter.
 ```twig
 {{ node.field_media|file_uri }}
-```
-
-Useful to apply the `image_style` filter to Media fields.
-```twig
-{{ node.field_media|file_uri|image_style('thumbnail') }}
 ```
 
 ### File URL
