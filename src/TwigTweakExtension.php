@@ -508,7 +508,7 @@ class TwigTweakExtension extends AbstractExtension {
   /**
    * Returns a render array for entity, field list or field item.
    *
-   * @param mixed $object
+   * @param object|null $object
    *   The object to build a render array from.
    * @param string|array $view_mode
    *   Can be either the name of a view mode, or an array of display settings.
@@ -521,7 +521,7 @@ class TwigTweakExtension extends AbstractExtension {
    * @return array
    *   A render array to represent the object.
    */
-  public static function viewFilter(object $object, ?string $view_mode = 'default', string $langcode = NULL, bool $check_access = TRUE): array {
+  public static function viewFilter(?object $object, $view_mode = 'default', string $langcode = NULL, bool $check_access = TRUE): array {
     $build = [];
     if ($object instanceof FieldItemListInterface || $object instanceof FieldItemInterface) {
       $build = $object->view($view_mode);
