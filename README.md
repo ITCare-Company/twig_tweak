@@ -303,6 +303,12 @@ For string arguments it works similar to core `file_url()` Twig function.
 {{ 'public://sea.jpg'|file_url }}
 ```
 
+In order to generate absolute URL set "relative" parameter to `false`.
+```twig
+{{ 'public://sea.jpg'|file_url(relative=false) }}
+{{ 'public://sea.jpg'|file_url(false) }}
+```
+
 When field item list passed the URL will be extracted from the first item. In
 order to get URL of specific item specify its delta explicitly using array
 notation.
@@ -314,6 +320,12 @@ notation.
 Media fields are fully supported including OEmbed resources.
 ```twig
 {{ node.field_media|file_url }}
+```
+
+It is also possible to extract file URL directly from an entity.
+```twig
+{{ image|file_url }}
+{{ media|file_url }}
 ```
 
 ### PHP

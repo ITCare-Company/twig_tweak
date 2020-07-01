@@ -605,18 +605,7 @@ class TwigTweakExtension extends AbstractExtension {
    *   A URL that may be used to access the file.
    */
   public static function fileUrlFilter($input): ?string {
-    if (is_string($input)) {
-      return file_url_transform_relative(file_create_url($input));
-    }
-    if ($input instanceof EntityReferenceFieldItemListInterface) {
-      $referenced_entities = $input->referencedEntities();
-      if (isset($referenced_entities[0])) {
-        return self::getUrlFromEntity($referenced_entities[0]);
-      }
-    }
-    elseif ($input instanceof EntityReferenceItem) {
-      return self::getUrlFromEntity($input->entity);
-    }
+    return \Drupal::service('twig_tweak.url_extractor')->extractUrl($input);
   }
 
   /**
@@ -663,31 +652,6 @@ class TwigTweakExtension extends AbstractExtension {
     }
     elseif ($entity instanceof FileInterface) {
       return $entity->getFileUri();
-    }
-  }
-
-  /**
-   * Extracts file URL from content entity.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   Entity object that contains information about the file.
-   *
-   * @return string|null
-   *   A URL that may be used to access the file.
-   */
-  private static function getUrlFromEntity(EntityInterface $entity): ?string {
-    if ($entity instanceof MediaInterface) {
-      $source = $entity->getSource();
-      $value = $source->getSourceFieldValue($entity);
-      if ($source instanceof OEmbedInterface) {
-        return $value;
-      }
-      elseif ($file = File::load($value)) {
-        return $file->createFileUrl();
-      }
-    }
-    elseif ($entity instanceof FileInterface) {
-      return $entity->createFileUrl();
     }
   }
 

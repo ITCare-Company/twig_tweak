@@ -31,3 +31,7 @@ services:
 
   twig_tweak.image_view_builder:
     class: Drupal\twig_tweak\View\ImageViewBuilder
+
+  twig_tweak.url_extractor:
+    class: Drupal\twig_tweak\UrlExtractor
+    arguments: ['@entity_type.manager']
