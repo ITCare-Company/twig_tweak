@@ -11,7 +11,7 @@ use Drupal\Tests\TestFileCreationTrait;
 /**
  * A base class of URL and URI extractor tests.
  */
-abstract class AbstractExtractorTest extends KernelTestBase {
+abstract class AbstractExtractorTestCase extends KernelTestBase {
 
   use TestFileCreationTrait;
 

@@ -7,7 +7,7 @@ namespace Drupal\Tests\twig_tweak\Kernel;
  *
  * @group twig_tweak
  */
-final class UriExtractorTest extends AbstractExtractorTest {
+final class UriExtractorTest extends AbstractExtractorTestCase {
 
   /**
    * Test callback.
