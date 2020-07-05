@@ -35,3 +35,7 @@ services:
   twig_tweak.url_extractor:
     class: Drupal\twig_tweak\UrlExtractor
     arguments: ['@entity_type.manager']
+
+  twig_tweak.uri_extractor:
+    class: Drupal\twig_tweak\UriExtractor
+    arguments: ['@entity_type.manager']

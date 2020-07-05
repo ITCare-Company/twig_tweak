@@ -7,21 +7,15 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Url;
-use Drupal\file\Entity\File;
-use Drupal\file\FileInterface;
 use Drupal\image\Entity\ImageStyle;
-use Drupal\media\MediaInterface;
-use Drupal\media\Plugin\media\Source\OEmbedInterface;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\Markup as TwigMarkup;
@@ -581,18 +575,7 @@ class TwigTweakExtension extends AbstractExtension {
    *   A URI that may be used to access the file.
    */
   public static function fileUriFilter($input): ?string {
-    if ($input instanceof EntityReferenceFieldItemListInterface) {
-      $referenced_entities = $input->referencedEntities();
-      if (isset($referenced_entities[0])) {
-        return self::getUriFromEntity($referenced_entities[0]);
-      }
-    }
-    elseif ($input instanceof EntityReferenceItem) {
-      return self::getUriFromEntity($input->entity);
-    }
-    elseif ($input instanceof EntityInterface) {
-      return self::getUriFromEntity($input);
-    }
+    return \Drupal::service('twig_tweak.uri_extractor')->extractUri($input);
   }
 
   /**
@@ -600,12 +583,14 @@ class TwigTweakExtension extends AbstractExtension {
    *
    * @param string|object $input
    *   Can be either file URI or an object that contains the URI.
+   * @param bool $relative
+   *   (optional) Whether the URL should be root-relative, defaults to true.
    *
    * @return string|null
    *   A URL that may be used to access the file.
    */
-  public static function fileUrlFilter($input): ?string {
-    return \Drupal::service('twig_tweak.url_extractor')->extractUrl($input);
+  public static function fileUrlFilter($input, bool $relative = TRUE): ?string {
+    return \Drupal::service('twig_tweak.url_extractor')->extractUrl($input, $relative);
   }
 
   /**
@@ -628,31 +613,6 @@ class TwigTweakExtension extends AbstractExtension {
     $output = ob_get_contents();
     ob_end_clean();
     return $output;
-  }
-
-  /**
-   * Extracts file URI from content entity.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   Entity object that contains information about the file.
-   *
-   * @return string|null
-   *   A URI that may be used to access the file.
-   */
-  private static function getUriFromEntity(EntityInterface $entity): ?string {
-    if ($entity instanceof MediaInterface) {
-      $source = $entity->getSource();
-      $value = $source->getSourceFieldValue($entity);
-      if ($source instanceof OEmbedInterface) {
-        return $value;
-      }
-      elseif ($file = File::load($value)) {
-        return $file->getFileUri();
-      }
-    }
-    elseif ($entity instanceof FileInterface) {
-      return $entity->getFileUri();
-    }
   }
 
 }

@@ -11,7 +11,7 @@ use Drupal\media\MediaInterface;
 use Drupal\media\Plugin\media\Source\OEmbedInterface;
 
 /**
- * UrlExtractor service.
+ * URL extractor service.
  */
 class UrlExtractor {
 
@@ -35,7 +35,7 @@ class UrlExtractor {
    * @param string|object $input
    *   Can be either file URI or an object that contains the URI.
    * @param bool $relative
-   *   (optional) Whether the URL should be root-relative, defaults to TRUE.
+   *   (optional) Whether the URL should be root-relative, defaults to true.
    *
    * @return string|null
    *   A URL that may be used to access the file.
@@ -65,7 +65,7 @@ class UrlExtractor {
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   Entity object that contains information about the file.
    * @param bool $relative
-   *   (optional) Whether the URL should be root-relative, defaults to TRUE.
+   *   (optional) Whether the URL should be root-relative, defaults to true.
    *
    * @return string|null
    *   A URL that may be used to access the file.
@@ -81,6 +81,7 @@ class UrlExtractor {
         return $value;
       }
       else {
+        /** @var \Drupal\file\FileInterface $file */
         $file = $this->entityTypeManager->getStorage('file')->load($value);
         if ($file) {
           return $file->createFileUrl($relative);

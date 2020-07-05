@@ -359,8 +359,12 @@ final class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-image-style-from-file-uri-from-media-field" and contains(text(), "styles/thumbnail/public/image-1.png")]';
     $this->assertXpath($xpath);
 
-    // -- File URL from URI.
-    $xpath = '//div[@class = "tt-file-url-from-uri" and contains(text(), "/files/image-test.png")]';
+    // -- File URL from URI (relative).
+    $xpath = '//div[@class = "tt-file-url-from-uri" and contains(text(), "/files/image-test.png") and not(contains(text(), "http://"))]';
+    $this->assertXpath($xpath);
+
+    // -- File URL from URI (absolute).
+    $xpath = '//div[@class = "tt-file-url-from-uri-absolute" and contains(text(), "/files/image-test.png") and contains(text(), "http://")]';
     $this->assertXpath($xpath);
 
     // -- File URL from image field.

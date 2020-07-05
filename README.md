@@ -116,7 +116,6 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 {{ drupal_image('public://ocean.jpg', 'wide', responsive=true) }}
 ```
 
-
 ### Drupal Token
 ```twig
 {{ drupal_token('site:name') }}
