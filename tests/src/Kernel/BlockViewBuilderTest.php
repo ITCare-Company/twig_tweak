@@ -47,7 +47,9 @@ final class BlockViewBuilderTest extends KernelTestBase {
       ],
       '#theme' => 'block',
       '#id' => 'twig_tweak_test_foo',
-      '#attributes' => [],
+      '#attributes' => [
+        'id' => 'foo',
+      ],
       '#contextual_links' => [],
       '#configuration' => [
         'id' => 'twig_tweak_test_foo',
@@ -100,6 +102,11 @@ final class BlockViewBuilderTest extends KernelTestBase {
     $expected_build = [
       'content' => [
         '#markup' => 'Foo',
+        // Since the block is built without wrapper #attributes must remain in
+        // 'content' element.
+        '#attributes' => [
+          'id' => 'foo',
+        ],
         '#cache' => [
           'contexts' => ['url'],
           'tags' => ['tag_from_build'],

@@ -41,6 +41,9 @@ final class FooBlock extends BlockBase {
   public function build(): array {
     return [
       '#markup' => $this->getConfiguration()['content'],
+      '#attributes' => [
+        'id' => 'foo',
+      ],
       '#cache' => [
         'contexts' => ['url'],
         'tags' => ['tag_from_' . __FUNCTION__],

@@ -126,6 +126,10 @@ class BlockViewBuilder {
         $block_plugin->setTitle($title);
       }
 
+      // Place the content returned by the block plugin into a 'content' child
+      // element, as a way to allow the plugin to have complete control of its
+      // properties and rendering (for instance, its own #theme) without
+      // conflicting with the properties used above.
       $build['content'] = $block_plugin->build();
 
       if ($block_plugin instanceof TitleBlockPluginInterface) {
@@ -143,6 +147,16 @@ class BlockViewBuilder {
           '#base_plugin_id' => $block_plugin->getBaseId(),
           '#derivative_plugin_id' => $block_plugin->getDerivativeId(),
         ];
+        // Semantically, the content returned by the plugin is the block, and in
+        // particular, #attributes and #contextual_links is information about
+        // the *entire* block. Therefore, we must move these properties into the
+        // top-level element.
+        foreach (['#attributes', '#contextual_links'] as $property) {
+          if (isset($build['content'][$property])) {
+            $build[$property] = $build['content'][$property];
+            unset($build['content'][$property]);
+          }
+        }
       }
     }
 
