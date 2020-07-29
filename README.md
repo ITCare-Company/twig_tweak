@@ -33,7 +33,7 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 {{ drupal_block('system_branding_block') }}
 
 {# Print block using custom configuration. #}
-{{ drupal_block('system_branding_block', {label: 'Branding', use_site_name: false}) }}
+{{ drupal_block('system_branding_block', {label: 'Branding', use_site_name: false, id}) }}
 
 {# Bypass block.html.twig theming. #}
 {{ drupal_block('system_branding_block', wrapper=false) }}

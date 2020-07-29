@@ -144,15 +144,15 @@ class TwigTweakExtension extends AbstractExtension {
   /**
    * Builds the render array of a given region.
    */
-  public static function drupalRegion(string $region, string $theme = NULL): array {
+  public static function drupalRegion(string $region, ?string $theme = NULL): array {
     return \Drupal::service('twig_tweak.region_view_builder')->build($region, $theme);
   }
 
   /**
    * Returns the render array to represent an entity.
    */
-  public static function drupalEntity(string $entity_type, ?string $id, string $view_mode = 'full', string $langcode = NULL, bool $check_access = TRUE): array {
-    $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load((string) $id);
+  public static function drupalEntity(string $entity_type, string $id, string $view_mode = 'full', ?string $langcode = NULL, bool $check_access = TRUE): array {
+    $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($id);
     if ($entity) {
       return \Drupal::service('twig_tweak.entity_view_builder')
         ->build($entity, $view_mode, $langcode, $check_access);
@@ -163,7 +163,7 @@ class TwigTweakExtension extends AbstractExtension {
   /**
    * Gets the built and processed entity form for the given entity type.
    */
-  public static function drupalEntityForm(string $entity_type, string $id = NULL, string $form_mode = 'default', array $values = [], bool $check_access = TRUE): array {
+  public static function drupalEntityForm(string $entity_type, ?string $id = NULL, string $form_mode = 'default', array $values = [], bool $check_access = TRUE): array {
     $entity_storage = \Drupal::entityTypeManager()->getStorage($entity_type);
     $entity = $id ? $entity_storage->load($id) : $entity_storage->create($values);
     if ($entity) {
@@ -176,8 +176,8 @@ class TwigTweakExtension extends AbstractExtension {
   /**
    * Returns the render array for a single entity field.
    */
-  public static function drupalField(string $field_name, ?string $entity_type, ?string $id, string $view_mode = 'full', string $langcode = NULL, bool $check_access = TRUE): array {
-    $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load((string) $id);
+  public static function drupalField(string $field_name, string $entity_type, string $id, string $view_mode = 'full', string $langcode = NULL, bool $check_access = TRUE): array {
+    $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($id);
     if ($entity) {
       return \Drupal::service('twig_tweak.field_view_builder')
         ->build($entity, $field_name, $view_mode, $langcode, $check_access);
@@ -211,22 +211,22 @@ class TwigTweakExtension extends AbstractExtension {
   /**
    * Builds an image.
    */
-  public static function drupalImage(string $property, string $style = NULL, array $attributes = [], bool $responsive = FALSE, bool $check_access = TRUE): array {
+  public static function drupalImage(string $selector, string $style = NULL, array $attributes = [], bool $responsive = FALSE, bool $check_access = TRUE): array {
 
-    // Determine property type by its value.
-    if (preg_match('/^\d+$/', $property)) {
-      $property_type = 'fid';
+    // Determine selector type by its value.
+    if (preg_match('/^\d+$/', $selector)) {
+      $selector_type = 'fid';
     }
-    elseif (Uuid::isValid($property)) {
-      $property_type = 'uuid';
+    elseif (Uuid::isValid($selector)) {
+      $selector_type = 'uuid';
     }
     else {
-      $property_type = 'uri';
+      $selector_type = 'uri';
     }
 
     $files = \Drupal::entityTypeManager()
       ->getStorage('file')
-      ->loadByProperties([$property_type => $property]);
+      ->loadByProperties([$selector_type => $selector]);
 
     // To avoid ambiguity render nothing unless exact one image has been found.
     if (count($files) != 1) {
