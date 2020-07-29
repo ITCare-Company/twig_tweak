@@ -113,7 +113,7 @@ final class RegionViewBuilderTest extends KernelTestBase {
 
     $expected_html = <<< 'HTML'
       <div>
-        <div id="block-public-block" role="complementary">
+        <div id="block-public-block">
           <span>Powered by <a href="https://www.drupal.org">Drupal</a></span>
         </div>
       </div>
