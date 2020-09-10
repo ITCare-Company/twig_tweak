@@ -5,6 +5,7 @@ namespace Drupal\twig_tweak;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Uuid\Uuid;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldItemInterface;
@@ -519,6 +520,12 @@ class TwigTweakExtension extends AbstractExtension {
     $build = [];
     if ($object instanceof FieldItemListInterface || $object instanceof FieldItemInterface) {
       $build = $object->view($view_mode);
+      /** @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter $parent */
+      if ($parent = $object->getParent()) {
+        CacheableMetadata::createFromRenderArray($build)
+          ->merge(CacheableMetadata::createFromObject($parent->getEntity()))
+          ->applyTo($build);
+      }
     }
     elseif ($object instanceof EntityInterface) {
       $build = \Drupal::service('twig_tweak.entity_view_builder')->build($object, $view_mode, $langcode, $check_access);
