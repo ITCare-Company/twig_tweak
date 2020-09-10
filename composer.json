@@ -3,7 +3,7 @@
     "type": "drupal-module",
     "description": "A Twig extension with some useful functions and filters for Drupal development.",
     "keywords": ["Drupal", "Twig"],
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "homepage": "https://www.drupal.org/project/twig_tweak",
     "support": {
         "issues": "https://www.drupal.org/project/issues/twig_tweak",
