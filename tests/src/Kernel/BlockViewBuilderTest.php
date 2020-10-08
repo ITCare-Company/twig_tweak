@@ -46,7 +46,7 @@ final class BlockViewBuilderTest extends KernelTestBase {
         ],
       ],
       '#theme' => 'block',
-      '#id' => 'twig_tweak_test_foo',
+      '#id' => NULL,
       '#attributes' => [
         'id' => 'foo',
       ],
@@ -74,7 +74,7 @@ final class BlockViewBuilderTest extends KernelTestBase {
       ],
     ];
     self::assertSame($expected_build, $build);
-    self::assertSame('<div id="block-twig-tweak-test-foo">Foo</div>', $this->renderPlain($build));
+    self::assertSame('<div id="foo">Foo</div>', $this->renderPlain($build));
 
     // -- Non-default configuration.
     $configuration = [
