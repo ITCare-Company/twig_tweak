@@ -1,6 +1,6 @@
 services:
-  twig_tweak.lint:
-    class: Drupal\twig_tweak\Command\TwigLintCommand
+  twig_tweak.validate:
+    class: Drupal\twig_tweak\Command\ValidateCommand
     arguments: ['@twig']
     tags:
       - { name: console.command }

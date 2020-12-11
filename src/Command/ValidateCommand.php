@@ -7,7 +7,7 @@ use Symfony\Component\Finder\Finder;
 /**
  * Implements twig-tweak:lint console command.
  */
-final class TwigLintCommand extends LintCommand {
+final class ValidateCommand extends LintCommand {
 
   /**
    * {@inheritdoc}
@@ -25,14 +25,13 @@ final class TwigLintCommand extends LintCommand {
 
     parent::configure();
     $this->setAliases(['twig-validate']);
-
-    $help = <<< 'TEXT'
+    $this->setHelp(
+      $this->getHelp() . <<< 'TEXT'
 
       This command only validates Twig Syntax. For checking code style
       consider using <info>friendsoftwig/twigcs</info> package.
-      TEXT;
-
-    $this->setHelp($this->getHelp() . $help);
+      TEXT
+    );
   }
 
 }
