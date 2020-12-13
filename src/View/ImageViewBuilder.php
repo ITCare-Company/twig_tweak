@@ -7,7 +7,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\file\FileInterface;
 
 /**
- * ImageViewBuilder service.
+ * Image view builder.
  */
 class ImageViewBuilder {
 

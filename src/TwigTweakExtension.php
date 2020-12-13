@@ -84,6 +84,7 @@ class TwigTweakExtension extends AbstractExtension {
       }),
       new TwigFunction('drupal_breadcrumb', [self::class, 'drupalBreadcrumb']),
       new TwigFunction('drupal_breakpoint', [self::class, 'drupalBreakpoint'], $all_options),
+      // @phpcs:ignore Drupal.Arrays.Array.LongLineDeclaration
       new TwigFunction('drupal_contextual_links', [self::class, 'drupalContextualLinks']),
     ];
 

@@ -38,7 +38,10 @@ final class EntityFormViewBuilderTest extends KernelTestBase {
     $this->installConfig(['system']);
     $this->installEntitySchema('node');
     NodeType::create(['type' => 'article'])->save();
-    $this->setUpCurrentUser(['name' => 'User 1'], ['edit any article content', 'access content']);
+    $this->setUpCurrentUser(
+      ['name' => 'User 1'],
+      ['edit any article content', 'access content'],
+    );
   }
 
   /**

@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * EntityViewBuilder service.
+ * Entity view builder.
  */
 class EntityViewBuilder {
 

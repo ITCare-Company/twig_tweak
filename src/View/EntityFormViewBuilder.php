@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * EntityFormViewBuilder service.
+ * Entity form view builder.
  */
 class EntityFormViewBuilder {
 

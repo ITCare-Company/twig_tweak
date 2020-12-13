@@ -5,7 +5,7 @@ namespace Drupal\twig_tweak\View;
 use Drupal\Core\Menu\MenuLinkTreeInterface;
 
 /**
- * MenuViewBuilder service.
+ * Menu view builder.
  */
 class MenuViewBuilder {
 

@@ -16,7 +16,7 @@ use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * BlockViewBuilder service.
+ * Block view builder.
  */
 class BlockViewBuilder {
 

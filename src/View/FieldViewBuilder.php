@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 
 /**
- * FieldViewBuilder service.
+ * Field view builder.
  */
 class FieldViewBuilder {
 

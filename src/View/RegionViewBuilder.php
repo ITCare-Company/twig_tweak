@@ -11,7 +11,7 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * RegionViewBuilder service.
+ * Region view builder.
  */
 class RegionViewBuilder {
 
@@ -83,7 +83,7 @@ class RegionViewBuilder {
 
     $cache_metadata = new CacheableMetadata();
 
-    /* @var $blocks \Drupal\block\BlockInterface[] */
+    /** @var \Drupal\block\BlockInterface[] $blocks */
     foreach ($blocks as $id => $block) {
       $access = $block->access('view', NULL, TRUE);
       $cache_metadata = $cache_metadata->merge(CacheableMetadata::createFromObject($access));
