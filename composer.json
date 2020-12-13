@@ -11,6 +11,7 @@
     },
     "require": {
         "php": ">=7.3",
+        "ext-json": "*",
         "drupal/core": "^9.0",
         "twig/twig": "^2.12"
     },
