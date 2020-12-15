@@ -7,7 +7,7 @@ blocks in a Twig template.
 
 ## 1. Block - plugin
 Technically speaking block plugin is a PHP class with a special annotation. See
-Branding block plugin as an example.
+[Branding block plugin](https://git.drupalcode.org/project/drupal/-/blob/9.1.0/core/modules/system/src/Plugin/Block/SystemBrandingBlock.php) as an example.
 
 The simplest way to render block plugin is as follows.
 ```twig
@@ -20,7 +20,7 @@ parameter.
 {{ drupal_block('plugin_id', {label: 'Example'|t, some_setting: 'example', setting_array: {value: value}}) }}
 ```
 
-By default, blocks are rendered using block.html.twig template. This can be
+By default, blocks are rendered using `block.html.twig` template. This can be
 turned off by setting wrapper parameter to false.
 ```twig
 {{ drupal_block('plugin_id', wrapper=false) }}
@@ -28,11 +28,11 @@ turned off by setting wrapper parameter to false.
 
 The tricky thing here is figuring out block plugin ID. If you know which module
 provides a particular plugin, you can find its PHP class under the
-MODULE_NAME/src/Plugin/Block directory and locate the ID in the class
+`MODULE_NAME/src/Plugin/Block` directory and locate the ID in the class
 annotation. For instance the plugin ID of login block can be found in the
-following file: core/modules/user/src/Plugin/Block/UserLoginBlock.php. When
+following file: `core/modules/user/src/Plugin/Block/UserLoginBlock.php`. When
 using the plugin ID, convert its format to snake_case (meaning the words are
-lowercase and separated by underscores e.g. system_branding_block).
+lowercase and separated by underscores e.g. `system_branding_block`).
 
 To look up all core block plugins use grep search.
 
@@ -41,7 +41,7 @@ grep -r ' id = ' core/modules/*/src/Plugin/Block/;'
 ```
 
 However, this does not work for block types that are defined dynamically using
-plugin derivatives (like Views blocks).
+plugin derivatives (like views blocks).
 
 The best way to get all registered plugin IDs is fetching them with block plugin
 manager
@@ -55,7 +55,7 @@ Note that the plugin_id needs to be wrapped in quotes. For example,
 ```
 
 ## 2. Block - configuration entity
-This is what we configure on admin/structure/block page. It's important to know
+This is what we configure on `admin/structure/block` page. It's important to know
 that eventually these entities are rendered using block plugins described above.
 The purpose of the configuration entities is to store plugin IDs and
 configuration. Additionally, they reference theme and region where a block
@@ -73,7 +73,7 @@ Disabled blocks won't be printed unless you suppress access control as follows.
 {{ drupal_entity('block', 'block_id', check_access=false) }}
 ```
 
-Note that block_id here has nothing to do with block_plugin_id we discussed
+Note that block_id here has nothing to do with 'block_plugin_id' we discussed
 before. It is an ID (machine_name) of block configuration entity. You may copy
 it from the block configuration form.
 
@@ -84,9 +84,9 @@ drush ev 'print_r(\Drupal::configFactory()->listAll("block.block."));'
 
 ## 3. Block - content entity
 Content blocks, also known as custom blocks are configured on
-admin/structure/block/block-content page. Actually they have little to do with
+`admin/structure/block/block-content` page. Actually they have little to do with
 Drupal block system. These blocks are just content entities like node, user,
-comment and so on. Their provider (block_content module) also offers a plugin to
+comment and so on. Their provider (Custom block module) also offers a plugin to
 display them in blocks.
 
 The primary way to display content blocks is like follows.
@@ -105,7 +105,7 @@ content block IDs is as simple as executing a single SQL query.
 drush sqlq 'SELECT id, info FROM block_content_field_data'
 ```
 
-Since this method does not use block template (block.html.twig) you may need to
+Since this method does not use block template (`block.html.twig`) you may need to
 supply block subject and wrappers manually.
 ```twig
 <div class="block">

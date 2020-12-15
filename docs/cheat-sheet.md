@@ -12,7 +12,7 @@
 
 ## Drupal Block
 In order to list all registered plugin IDs fetch them with block plugin manager.
-With Drush it can be done like follows:
+With Drush, it can be done like follows:
 ```shell
 drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefinitions()));"
 ```
