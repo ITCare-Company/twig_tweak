@@ -5,7 +5,7 @@ to as "Blocks". So it is essential to understand what kind of block you are
 going to render. This guide covers three main cases you may deal when rendering
 blocks in a Twig template.
 
-## 1. Block - plugin
+## Block - plugin
 Technically speaking block plugin is a PHP class with a special annotation. See
 [Branding block plugin](https://git.drupalcode.org/project/drupal/-/blob/9.1.0/core/modules/system/src/Plugin/Block/SystemBrandingBlock.php#L16-22) as an example.
 
@@ -54,7 +54,7 @@ Note that the plugin_id needs to be wrapped in quotes. For example,
 {{ drupal_block('system_breadcrumb_block') }}
 ```
 
-## 2. Block - configuration entity
+## Block - configuration entity
 This is what we configure on `admin/structure/block` page. It's important to know
 that eventually these entities are rendered using block plugins described above.
 The purpose of the configuration entities is to store plugin IDs and
@@ -82,7 +82,7 @@ The following Drush command will list all available block entities.
 drush ev 'print_r(\Drupal::configFactory()->listAll("block.block."));'
 ```
 
-## 3. Block - content entity
+## Block - content entity
 Content blocks, also known as custom blocks are configured on
 `admin/structure/block/block-content` page. Actually they have little to do with
 Drupal block system. These blocks are just content entities like node, user,
@@ -123,4 +123,4 @@ Note that plugin ID in this case consists of entity type and entity UUID
 separated by a colon.
 
 It is also possible to create a configuration entity for this content block and
-print it as described in [Section 2](#2-block-configuration-entity).
+print it as described in [Configuration entity section](#block-configuration-entity).
