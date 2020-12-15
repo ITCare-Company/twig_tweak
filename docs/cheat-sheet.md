@@ -11,12 +11,11 @@
 ```
 
 ## Drupal Block
-In order to list all registered plugin IDs fetch them with block plugin manager.
+In order to figure out the plugin IDs list them using block plugin manager.
 With Drush, it can be done like follows:
 ```shell
 drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefinitions()));"
 ```
-
 ```twig
 {# Print block using default configuration. #}
 {{ drupal_block('system_branding_block') }}
@@ -28,10 +27,9 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 {{ drupal_block('system_branding_block', wrapper=false) }}
 ```
 
-@see https://www.drupal.org/node/2964457#block-plugin
+See [rendering blocks with Twig Tweak](blocks.md#block-plugin) for details.
 
 ## Drupal Region
-
 ```twig
 {# Print 'sidebar_first' region of the default site theme. #}
 {{ drupal_region('sidebar_first') }}
@@ -87,7 +85,6 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 ```
 
 ## Drupal Image
-
 ```twig
 {# Render image specified by file ID. #}
 {{ drupal_image(123) }}
@@ -143,12 +140,11 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 ```
 
 ## Drupal Link
-
 ```twig
 {# It supports the same options as drupal_url(), plus attributes. #}
 {{ drupal_link('View'|t, 'node/1', {attributes: {target: '_blank'}}) }}
 
-{# This link will only be shown for privileged users. #}
+{# This link will only be shown to the privileged users. #}
 {{ drupal_link('Example'|t, '/admin', check_access=true) }}
 ```
 
@@ -213,7 +209,7 @@ Twig filters.
 {% endif %}
 ```
 `image_style` will trigger an error on invalid or empty URIs, to avoid broken
-images when used in an `<img>` tag.
+images when used in an `<img/>` tag.
 
 ## Transliterate
 ```twig
@@ -254,7 +250,7 @@ images when used in an `<img>` tag.
 ## With
 This is an opposite of core `without` filter.
 ```twig
-{# Set top level value. #}
+{# Set top-level value. #}
 {{ content.field_image|with('#title', 'Photo'|t) }}
 
 {# Set nested value. #}
@@ -271,8 +267,8 @@ This is an opposite of core `without` filter.
 ```
 
 ## File URI
-When field item list passed the URI will be extracted from the first item. In
-order to get URI of specific item specify its delta explicitly using array
+When field item list is passed, the URI will be extracted from the first item.
+In order to get URI of specific item specify its delta explicitly using array
 notation.
 ```twig
 {{ node.field_image|file_uri }}
@@ -297,8 +293,8 @@ In order to generate absolute URL set "relative" parameter to `false`.
 {{ 'public://sea.jpg'|file_url(false) }}
 ```
 
-When field item list passed the URL will be extracted from the first item. In
-order to get URL of specific item specify its delta explicitly using array
+When field item list is passed, the URL will be extracted from the first item.
+In order to get URL of specific item specify its delta explicitly using array
 notation.
 ```twig
 {{ node.field_image|file_url }}
@@ -317,17 +313,16 @@ It is also possible to extract file URL directly from an entity.
 ```
 
 ## PHP
-PHP filter is disabled by default. You can enable it in settings.php file as
+PHP filter is disabled by default. You can enable it in `settings.php` file as
 follows:
 ```php
 $settings['twig_tweak_enable_php_filter'] = TRUE;
 ```
-
 ```twig
 {{ 'return date('Y');'|php }}
 ```
 
-Using PHP filter is discouraged as it may cause security implications. In fact
+Using PHP filter is discouraged as it may cause security implications. In fact,
 it is very rarely needed. The above code can be replaced with the following.
 ```twig
 {{ 'now'|date('Y') }}
