@@ -1,4 +1,4 @@
-# Using Twig Tweak to extend Views module functionality.
+# Using Twig Tweak to extend Views module functionality
 
 Twig Tweak's `drupal_view()` method provides access to embed views within any
 Twig code, including dynamically from within each row of another view. This
