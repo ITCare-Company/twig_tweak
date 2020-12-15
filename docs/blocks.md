@@ -7,7 +7,7 @@ blocks in a Twig template.
 
 ## 1. Block - plugin
 Technically speaking block plugin is a PHP class with a special annotation. See
-[Branding block plugin](https://git.drupalcode.org/project/drupal/-/blob/9.1.0/core/modules/system/src/Plugin/Block/SystemBrandingBlock.php) as an example.
+[Branding block plugin](https://git.drupalcode.org/project/drupal/-/blob/9.1.0/core/modules/system/src/Plugin/Block/SystemBrandingBlock.php#L16-22) as an example.
 
 The simplest way to render block plugin is as follows.
 ```twig
@@ -123,4 +123,4 @@ Note that plugin ID in this case consists of entity type and entity UUID
 separated by a colon.
 
 It is also possible to create a configuration entity for this content block and
-print it as described in Section 2.
+print it as described in [Section 2](#2-block-configuration-entity).
