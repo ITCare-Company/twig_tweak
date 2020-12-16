@@ -81,7 +81,10 @@ class RegionViewBuilder {
 
     $build = [];
 
-    $cache_metadata = new CacheableMetadata();
+    $entity_type = $this->entityTypeManager->getDefinition('block');
+    $cache_metadata = (new CacheableMetadata())
+      ->addCacheTags($entity_type->getListCacheTags())
+      ->addCacheContexts($entity_type->getListCacheContexts());
 
     /** @var \Drupal\block\BlockInterface[] $blocks */
     foreach ($blocks as $id => $block) {
@@ -102,8 +105,8 @@ class RegionViewBuilder {
     if ($build) {
       $build['#region'] = $region;
       $build['#theme_wrappers'] = ['region'];
-      $cache_metadata->applyTo($build);
     }
+    $cache_metadata->applyTo($build);
 
     return $build;
   }

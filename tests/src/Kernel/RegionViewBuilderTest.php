@@ -63,7 +63,14 @@ final class RegionViewBuilderTest extends KernelTestBase {
 
     $build = $view_builder->build('sidebar_first');
     // The build should be empty because 'stable' is not a default theme.
-    self::assertSame([], $build);
+    $expected_build = [
+      '#cache' => [
+        'contexts' => [],
+        'tags' => ['config:block_list'],
+        'max-age' => Cache::PERMANENT,
+      ],
+    ];
+    self::assertSame($expected_build, $build);
 
     // Specify the theme name explicitly.
     $build = $view_builder->build('sidebar_first', 'stable');
@@ -103,6 +110,7 @@ final class RegionViewBuilderTest extends KernelTestBase {
         'contexts' => ['user'],
         'tags' => [
           'config:block.block.public_block',
+          'config:block_list',
           'tag_for_private_block',
           'tag_for_public_block',
         ],
