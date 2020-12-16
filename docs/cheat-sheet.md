@@ -312,6 +312,12 @@ It is also possible to extract file URL directly from an entity.
 {{ media|file_url }}
 ```
 
+## Entity translation
+That is typically needed when printing data from referenced entities.
+```twig
+{{ media|translation.title|view }}
+```
+
 ## PHP
 PHP filter is disabled by default. You can enable it in `settings.php` file as
 follows:
