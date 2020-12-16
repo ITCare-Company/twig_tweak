@@ -112,6 +112,7 @@ class TwigTweakExtension extends AbstractExtension {
       new TwigFilter('children', [self::class, 'childrenFilter']),
       new TwigFilter('file_uri', [self::class, 'fileUriFilter']),
       new TwigFilter('file_url', [self::class, 'fileUrlFilter']),
+      new TwigFilter('translation', [self::class, 'entityTranslation']),
     ];
 
     if (Settings::get('twig_tweak_enable_php_filter')) {
@@ -599,6 +600,22 @@ class TwigTweakExtension extends AbstractExtension {
    */
   public static function fileUrlFilter($input, bool $relative = TRUE): ?string {
     return \Drupal::service('twig_tweak.url_extractor')->extractUrl($input, $relative);
+  }
+
+  /**
+   * Returns the translation for the given entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to get the translation from.
+   * @param string $langcode
+   *   (optional) For which language the translation should be looked for,
+   *   defaults to the current language context.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   The appropriate translation for the given language context.
+   */
+  public static function entityTranslation(EntityInterface $entity, string $langcode = NULL): EntityInterface {
+    return \Drupal::service('entity.repository')->getTranslationFromContext($entity, $langcode);
   }
 
   /**

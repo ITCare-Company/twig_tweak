@@ -379,6 +379,11 @@ final class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-file-url-from-media-field" and contains(text(), "/files/image-1.png")]';
     $this->assertXpath($xpath);
 
+    // -- Entity translation.
+    // This is just a smoke test because the node is not translatable.
+    $xpath = '//div[@class = "tt-translation" and contains(text(), "Alpha")]';
+    $this->assertXpath($xpath);
+
     // -- Hook twig_tweak_functions_alter().
     $xpath = '//div[@class = "tt-functions_alter" and text() = "-=bar=-"]';
     $this->assertXpath($xpath);
