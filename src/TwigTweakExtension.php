@@ -113,6 +113,7 @@ class TwigTweakExtension extends AbstractExtension {
       new TwigFilter('file_uri', [self::class, 'fileUriFilter']),
       new TwigFilter('file_url', [self::class, 'fileUrlFilter']),
       new TwigFilter('translation', [self::class, 'entityTranslation']),
+      new TwigFilter('cache_metadata', [self::class, 'CacheMetadata']),
     ];
 
     if (Settings::get('twig_tweak_enable_php_filter')) {
@@ -616,6 +617,19 @@ class TwigTweakExtension extends AbstractExtension {
    */
   public static function entityTranslation(EntityInterface $entity, string $langcode = NULL): EntityInterface {
     return \Drupal::service('entity.repository')->getTranslationFromContext($entity, $langcode);
+  }
+
+  /**
+   * Extracts cache metadata from object or render array.
+   *
+   * @param \Drupal\Core\Cache\CacheableDependencyInterface|array $input
+   *   The cacheable object or render array.
+   *
+   * @return array
+   *   A render array with extracted cache metadata.
+   */
+  public static function cacheMetadata($input): array {
+    return \Drupal::service('twig_tweak.cache_metadata_extractor')->extractCacheMetadata($input);
   }
 
   /**

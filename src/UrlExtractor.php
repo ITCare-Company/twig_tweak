@@ -5,8 +5,11 @@ namespace Drupal\twig_tweak;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
+use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\file\FileInterface;
+use Drupal\link\LinkItemInterface;
+use Drupal\link\Plugin\Field\FieldType\LinkItem;
 use Drupal\media\MediaInterface;
 use Drupal\media\Plugin\media\Source\OEmbedInterface;
 
@@ -55,6 +58,12 @@ class UrlExtractor {
     }
     elseif ($input instanceof EntityReferenceItem) {
       return $this->getUrlFromEntity($input->entity, $relative);
+    }
+    elseif ($input instanceof LinkItemInterface) {
+      return $input->getUrl()->toString();
+    }
+    elseif ($input instanceof FieldItemList && $input->first() instanceof LinkItemInterface) {
+      return $input->first()->getUrl()->toString();
     }
     return NULL;
   }
