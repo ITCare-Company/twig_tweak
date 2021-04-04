@@ -30,7 +30,7 @@ final class TwigTweakTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'twig_tweak',
     'twig_tweak_test',
     'views',

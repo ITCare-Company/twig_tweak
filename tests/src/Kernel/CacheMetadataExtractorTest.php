@@ -3,13 +3,21 @@
 namespace Drupal\Tests\twig_tweak\Kernel;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\KernelTests\KernelTestBase;
 
 /**
  * A test for Cache Metadata Extractor service.
  *
  * @group twig_tweak
  */
-final class CacheMetadataExtractorTest extends AbstractExtractorTestCase {
+final class CacheMetadataExtractorTest extends KernelTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
+    'twig_tweak',
+  ];
 
   /**
    * Test callback.
