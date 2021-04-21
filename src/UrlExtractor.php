@@ -51,11 +51,12 @@ class UrlExtractor {
       return $this->getUrlFromEntity($input, $relative);
     }
     elseif ($input instanceof EntityReferenceFieldItemListInterface) {
-      if ($item = $input->first()) {
+      $item = $input->first();
+      if (!empty($item) && $input->entity instanceof ContentEntityInterface) {
         return $this->getUrlFromEntity($item->entity, $relative);
       }
     }
-    elseif ($input instanceof EntityReferenceItem) {
+    elseif ($input instanceof EntityReferenceItem && $input->entity instanceof ContentEntityInterface) {
       return $this->getUrlFromEntity($input->entity, $relative);
     }
     elseif ($input instanceof LinkItemInterface) {
