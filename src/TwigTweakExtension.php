@@ -155,12 +155,21 @@ class TwigTweakExtension extends AbstractExtension {
   /**
    * Returns the render array to represent an entity.
    */
-  public static function drupalEntity(string $entity_type, string $id, string $view_mode = 'full', ?string $langcode = NULL, bool $check_access = TRUE): array {
-    $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($id);
+  public static function drupalEntity(string $entity_type, string $selector, string $view_mode = 'full', ?string $langcode = NULL, bool $check_access = TRUE): array {
+
+    // Load entity by id or uuid.
+    if (Uuid::isValid($selector)) {
+      $entities = \Drupal::entityTypeManager()->getStorage($entity_type)->loadByProperties(['uuid' => $selector]);
+      $entity = reset($entities);
+    } else {
+      $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($selector);
+    }
+
     if ($entity) {
       return \Drupal::service('twig_tweak.entity_view_builder')
         ->build($entity, $view_mode, $langcode, $check_access);
     }
+
     return [];
   }
 
