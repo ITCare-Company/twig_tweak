@@ -40,7 +40,7 @@ class CacheMetadataExtractor {
   /**
    * Extracts cache metadata from renders array.
    */
-  private function extractFromArray(array $build): CacheableMetadata {
+  private static function extractFromArray(array $build): CacheableMetadata {
     $cache_metadata = CacheableMetadata::createFromRenderArray($build);
     $keys = Element::children($build);
     foreach (array_intersect_key($build, array_flip($keys)) as $item) {

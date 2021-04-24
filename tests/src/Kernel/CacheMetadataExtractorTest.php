@@ -92,7 +92,7 @@ final class CacheMetadataExtractorTest extends KernelTestBase {
 
     // -- Wrong type.
     self::expectErrorMessage('The input should be either instance of Drupal\Core\Cache\CacheableDependencyInterface or array. stdClass was given.');
-    /** @noinspection PhpParamsInspection */
+    /* @noinspection PhpParamsInspection */
     $extractor->extractCacheMetadata(new \stdClass());
   }
 

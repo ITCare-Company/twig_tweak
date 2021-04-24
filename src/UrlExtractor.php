@@ -9,7 +9,6 @@ use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\file\FileInterface;
 use Drupal\link\LinkItemInterface;
-use Drupal\link\Plugin\Field\FieldType\LinkItem;
 use Drupal\media\MediaInterface;
 use Drupal\media\Plugin\media\Source\OEmbedInterface;
 
