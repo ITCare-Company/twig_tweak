@@ -43,11 +43,12 @@ class UriExtractor {
       return self::getUriFromEntity($input);
     }
     elseif ($input instanceof EntityReferenceFieldItemListInterface) {
-      if ($item = $input->first()) {
+      $item = $input->first();
+      if (!empty($item) && $input->entity instanceof ContentEntityInterface) {
         return $this->getUriFromEntity($item->entity);
       }
     }
-    elseif ($input instanceof EntityReferenceItem) {
+    elseif ($input instanceof EntityReferenceItem && $input->entity instanceof ContentEntityInterface) {
       return self::getUriFromEntity($input->entity);
     }
     return NULL;
