@@ -47,25 +47,27 @@ class UrlExtractor {
       $url = file_create_url($input);
       return $relative ? file_url_transform_relative($url) : $url;
     }
-    elseif ($input instanceof ContentEntityInterface) {
-      return $this->getUrlFromEntity($input, $relative);
-    }
-    elseif ($input instanceof EntityReferenceFieldItemListInterface) {
-      $item = $input->first();
-      if (!empty($item) && $input->entity instanceof ContentEntityInterface) {
-        return $this->getUrlFromEntity($item->entity, $relative);
-      }
-    }
-    elseif ($input instanceof EntityReferenceItem && $input->entity instanceof ContentEntityInterface) {
-      return $this->getUrlFromEntity($input->entity, $relative);
-    }
     elseif ($input instanceof LinkItemInterface) {
       return $input->getUrl()->toString();
     }
     elseif ($input instanceof FieldItemList && $input->first() instanceof LinkItemInterface) {
       return $input->first()->getUrl()->toString();
     }
-    return NULL;
+
+    $entity = $input;
+    if ($input instanceof EntityReferenceFieldItemListInterface) {
+      if ($item = $input->first()) {
+        $entity = $item->entity;
+      }
+    }
+    elseif ($input instanceof EntityReferenceItem) {
+      $entity = $input->entity;
+    }
+    // Drupal does not clean up references to deleted entities. So that the
+    // entity property might be empty while the field item might not.
+    // @see https://www.drupal.org/project/drupal/issues/2723323
+    return $entity instanceof ContentEntityInterface ?
+      $this->getUrlFromEntity($entity, $relative) : NULL;
   }
 
   /**
