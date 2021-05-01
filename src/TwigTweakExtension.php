@@ -434,12 +434,21 @@ class TwigTweakExtension extends AbstractExtension {
    *
    * @param string $text
    *   An HTML string containing replaceable tokens.
+   * @param array $data
+   *   (optional) An array of keyed objects. For simple replacement scenarios
+   *   'node', 'user', and others are common keys, with an accompanying node or
+   *   user object being the value. Some token types, like 'site', do not
+   *   require any explicit information from $data and can be replaced even if
+   *   it is empty.
+   * @param array $options
+   *   (optional) A keyed array of settings and flags to control the token
+   *   replacement process.
    *
    * @return string
    *   The entered HTML text with tokens replaced.
    */
-  public static function tokenReplaceFilter(string $text): string {
-    return \Drupal::token()->replace($text);
+  public static function tokenReplaceFilter(string $text, array $data = [], array $options = []): string {
+    return \Drupal::token()->replace($text, $data, $options);
   }
 
   /**
