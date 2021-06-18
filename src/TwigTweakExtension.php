@@ -666,7 +666,7 @@ class TwigTweakExtension extends AbstractExtension {
    */
   public static function phpFilter(array $context, string $code) {
     // Make Twig variables available in PHP code.
-    extract($context);
+    extract($context, EXTR_SKIP);
     ob_start();
     // phpcs:ignore Drupal.Functions.DiscouragedFunctions.Discouraged
     print eval($code);
