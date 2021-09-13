@@ -6,7 +6,6 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
-use Drupal\KernelTests\KernelTestBase;
 use Drupal\responsive_image\Entity\ResponsiveImageStyle;
 
 /**
@@ -14,7 +13,7 @@ use Drupal\responsive_image\Entity\ResponsiveImageStyle;
  *
  * @group twig_tweak
  */
-final class ImageViewBuilderTest extends KernelTestBase {
+final class ImageViewBuilderTest extends AbstractTestCase {
 
   /**
    * {@inheritdoc}
@@ -83,7 +82,7 @@ final class ImageViewBuilderTest extends KernelTestBase {
         'max-age' => 70,
       ],
     ];
-    self::assertSame($expected_build, $build);
+    self::assertRenderArray($expected_build, $build);
     self::assertSame('<img src="/files/ocean.jpg" alt="" />', $this->renderPlain($build));
 
     // -- With style.
@@ -105,7 +104,7 @@ final class ImageViewBuilderTest extends KernelTestBase {
         'max-age' => 70,
       ],
     ];
-    self::assertSame($expected_build, $build);
+    self::assertRenderArray($expected_build, $build);
     self::assertSame('<img alt="Ocean" src="/files/styles/large/public/ocean.jpg?itok=abc" />', $this->renderPlain($build));
 
     // -- With responsive style.
@@ -127,7 +126,7 @@ final class ImageViewBuilderTest extends KernelTestBase {
         'max-age' => 70,
       ],
     ];
-    self::assertSame($expected_build, $build);
+    self::assertRenderArray($expected_build, $build);
     self::assertSame('<picture><img src="/files/ocean.jpg" alt="Ocean" /></picture>', $this->renderPlain($build));
 
     // -- Private image with access check.
@@ -142,7 +141,7 @@ final class ImageViewBuilderTest extends KernelTestBase {
         'max-age' => 70,
       ],
     ];
-    self::assertSame($expected_build, $build);
+    self::assertRenderArray($expected_build, $build);
     self::assertSame('', $this->renderPlain($build));
 
     // -- Private image without access check.
@@ -157,7 +156,7 @@ final class ImageViewBuilderTest extends KernelTestBase {
         'max-age' => Cache::PERMANENT,
       ],
     ];
-    self::assertSame($expected_build, $build);
+    self::assertRenderArray($expected_build, $build);
     self::assertSame('<img src="/files/sea.jpg" alt="" />', $this->renderPlain($build));
   }
 
