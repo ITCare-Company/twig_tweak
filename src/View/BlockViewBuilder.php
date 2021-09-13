@@ -162,8 +162,8 @@ class BlockViewBuilder {
     }
 
     CacheableMetadata::createFromRenderArray($build)
-      ->merge(CacheableMetadata::createFromObject($access))
-      ->merge(CacheableMetadata::createFromObject($block_plugin))
+      ->addCacheableDependency($access)
+      ->addCacheableDependency($block_plugin)
       ->applyTo($build);
 
     if (!isset($build['#cache']['keys'])) {

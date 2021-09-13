@@ -89,7 +89,7 @@ class RegionViewBuilder {
     /** @var \Drupal\block\BlockInterface[] $blocks */
     foreach ($blocks as $id => $block) {
       $access = $block->access('view', NULL, TRUE);
-      $cache_metadata = $cache_metadata->merge(CacheableMetadata::createFromObject($access));
+      $cache_metadata = $cache_metadata->addCacheableDependency($access);
       if ($access->isAllowed()) {
         $block_plugin = $block->getPlugin();
         if ($block_plugin instanceof TitleBlockPluginInterface) {

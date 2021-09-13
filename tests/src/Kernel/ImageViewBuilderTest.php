@@ -76,7 +76,10 @@ final class ImageViewBuilderTest extends KernelTestBase {
           'user',
           'user.permissions',
         ],
-        'tags' => ['tag_for_public://ocean.jpg'],
+        'tags' => [
+          'file:1',
+          'tag_for_public://ocean.jpg',
+        ],
         'max-age' => 70,
       ],
     ];
@@ -95,7 +98,10 @@ final class ImageViewBuilderTest extends KernelTestBase {
           'user',
           'user.permissions',
         ],
-        'tags' => ['tag_for_public://ocean.jpg'],
+        'tags' => [
+          'file:1',
+          'tag_for_public://ocean.jpg',
+        ],
         'max-age' => 70,
       ],
     ];
@@ -114,7 +120,10 @@ final class ImageViewBuilderTest extends KernelTestBase {
           'user',
           'user.permissions',
         ],
-        'tags' => ['tag_for_public://ocean.jpg'],
+        'tags' => [
+          'file:1',
+          'tag_for_public://ocean.jpg',
+        ],
         'max-age' => 70,
       ],
     ];
@@ -126,7 +135,10 @@ final class ImageViewBuilderTest extends KernelTestBase {
     $expected_build = [
       '#cache' => [
         'contexts' => ['user'],
-        'tags' => ['tag_for_private://sea.jpg'],
+        'tags' => [
+          'file:2',
+          'tag_for_private://sea.jpg',
+        ],
         'max-age' => 70,
       ],
     ];
@@ -141,7 +153,7 @@ final class ImageViewBuilderTest extends KernelTestBase {
       '#theme' => 'image',
       '#cache' => [
         'contexts' => [],
-        'tags' => [],
+        'tags' => ['file:2'],
         'max-age' => Cache::PERMANENT,
       ],
     ];

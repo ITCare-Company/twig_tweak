@@ -547,7 +547,7 @@ class TwigTweakExtension extends AbstractExtension {
       /** @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter $parent */
       if ($parent = $object->getParent()) {
         CacheableMetadata::createFromRenderArray($build)
-          ->merge(CacheableMetadata::createFromObject($parent->getEntity()))
+          ->addCacheableDependency($parent->getEntity())
           ->applyTo($build);
       }
     }
