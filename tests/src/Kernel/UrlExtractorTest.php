@@ -15,9 +15,9 @@ final class UrlExtractorTest extends AbstractExtractorTestCase {
   public function testUrlExtractor(): void {
 
     $extractor = $this->container->get('twig_tweak.url_extractor');
-    $base_url = $this->container->get('file_url_generator')->generateAbsoluteString('');
+    $base_url = file_create_url('');
 
-    $request = $this->container->get('request_stack')->getCurrentRequest();
+    $request = \Drupal::request();
     $absolute_url = "{$request->getScheme()}://{$request->getHost()}/foo/bar.txt";
     $url = $extractor->extractUrl($absolute_url);
     self::assertSame('/foo/bar.txt', $url);
