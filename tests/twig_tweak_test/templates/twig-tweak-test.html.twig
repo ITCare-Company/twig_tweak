@@ -99,6 +99,12 @@
   <div class="tt-file-url-from-image-field">{{ node.field_image|file_url }}</div>
   <div class="tt-file-url-from-image-field-delta">{{ node.field_image[0]|file_url }}</div>
   <div class="tt-file-url-from-media-field">{{ node.field_media|file_url }}</div>
+  <div class="tt-entity-url">{{ node|entity_url(options={fragment: 'test'}) }}</div>
+  <div class="tt-entity-url-absolute">{{ node|entity_url(options={absolute: true}) }}</div>
+  <div class="tt-entity-url-edit-form">{{ node|entity_url('edit-form') }}</div>
+  <div class="tt-entity-link">{{ node|entity_link }}</div>
+  <div class="tt-entity-link-absolute">{{ node|entity_link('Example', options={absolute: true}) }}</div>
+  <div class="tt-entity-link-edit-form">{{ node|entity_link('Edit', 'edit-form') }}</div>
   <div class="tt-translation">{{ (node|translation).title.value }}</div>
   <div class="tt-functions_alter">{{ foo('bar') }}</div>
   <div class="tt-filters_alter">{{ 'foo'|bar }}</div>

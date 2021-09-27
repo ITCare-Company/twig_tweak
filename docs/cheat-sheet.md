@@ -311,6 +311,28 @@ It is also possible to extract file URL directly from an entity.
 {{ media|file_url }}
 ```
 
+## Entity URL
+Gets the URL object for the entity.
+See \Drupal\Core\Entity\EntityInterface::toUrl()
+```twig
+{# Creates canonical URL for the node. #}
+{{ node|entity_url }}
+
+{# Creates URL for the node edit form. #}
+{{ node|entity_url('edit-form') }}
+```
+
+## Entity Link
+Generates the HTML for a link to this entity.
+See \Drupal\Core\Entity\EntityInterface::toLink()
+```twig
+{# Creates a link to the node using the node's label. #}
+{{ node|entity_link }}
+
+{# Creates link to node comment form. #}
+{{ node|entity_link('Add new comment'|t, 'canonical', {fragment: 'comment-form'}) }}
+```
+
 ## Entity translation
 That is typically needed when printing data from referenced entities.
 ```twig

@@ -112,6 +112,8 @@ class TwigTweakExtension extends AbstractExtension {
       new TwigFilter('children', [self::class, 'childrenFilter']),
       new TwigFilter('file_uri', [self::class, 'fileUriFilter']),
       new TwigFilter('file_url', [self::class, 'fileUrlFilter']),
+      new TwigFilter('entity_url', [self::class, 'entityUrl']),
+      new TwigFilter('entity_link', [self::class, 'entityLink']),
       new TwigFilter('translation', [self::class, 'entityTranslation']),
       new TwigFilter('cache_metadata', [self::class, 'CacheMetadata']),
     ];
@@ -622,6 +624,30 @@ class TwigTweakExtension extends AbstractExtension {
    */
   public static function fileUrlFilter($input, bool $relative = TRUE): ?string {
     return \Drupal::service('twig_tweak.url_extractor')->extractUrl($input, $relative);
+  }
+
+  /**
+   * Gets the URL object for the entity.
+   *
+   * @todo Remove this once Drupal allows `toUrl` method in the sandbox policy.
+   *
+   * @see https://www.drupal.org/node/2907810
+   * @see \Drupal\Core\Entity\EntityInterface::toUrl()
+   */
+  public static function entityUrl(EntityInterface $entity, string $rel = 'canonical', array $options = []): Url {
+    return $entity->toUrl($rel, $options);
+  }
+
+  /**
+   * Gets the URL object for the entity.
+   *
+   * @todo Remove this once Drupal allows `toLink` method in the sandbox policy.
+   *
+   * @see https://www.drupal.org/node/2907810
+   * @see \Drupal\Core\Entity\EntityInterface::toLink()
+   */
+  public static function entityLink(EntityInterface $entity, ?string $text = NULL, string $rel = 'canonical', array $options = []): Link {
+    return $entity->toLink($text, $rel, $options);
   }
 
   /**

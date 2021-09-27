@@ -390,6 +390,30 @@ final class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-file-url-from-media-field" and contains(text(), "/files/image-1.png")]';
     $this->assertXpath($xpath);
 
+    // -- Entity URL (canonical).
+    $xpath = '//div[@class = "tt-entity-url" and contains(text(), "/node/1#test") and not(contains(text(), "http"))]';
+    $this->assertXpath($xpath);
+
+    // -- Entity URL (absolute).
+    $xpath = '//div[@class = "tt-entity-url-absolute" and contains(text(), "/node/1") and contains(text(), "http")]';
+    $this->assertXpath($xpath);
+
+    // -- Entity URL (edit form).
+    $xpath = '//div[@class = "tt-entity-url-edit-form" and contains(text(), "/node/1/edit")]';
+    $this->assertXpath($xpath);
+
+    // -- Entity Link (canonical).
+    $xpath = '//div[@class = "tt-entity-link"]/a[text() = "Alpha" and contains(@href, "/node/1")  and not(contains(@href, "http"))]';
+    $this->assertXpath($xpath);
+
+    // -- Entity Link (absolute).
+    $xpath = '//div[@class = "tt-entity-link-absolute"]/a[text() = "Example" and contains(@href, "/node/1") and contains(@href, "http")]';
+    $this->assertXpath($xpath);
+
+    // -- Entity Link (edit form).
+    $xpath = '//div[@class = "tt-entity-link-edit-form"]/a[text() = "Edit" and contains(@href, "/node/1/edit")]';
+    $this->assertXpath($xpath);
+
     // -- Entity translation.
     // This is just a smoke test because the node is not translatable.
     $xpath = '//div[@class = "tt-translation" and contains(text(), "Alpha")]';
