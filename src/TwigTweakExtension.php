@@ -246,10 +246,12 @@ class TwigTweakExtension extends AbstractExtension {
       ->getStorage('file')
       ->loadByProperties([$selector_type => $selector]);
 
-    // To avoid ambiguity render nothing unless exact one image has been found.
-    if (count($files) != 1) {
+    if (count($files) < 1) {
       return [];
     }
+
+    // To avoid ambiguity order by fid.
+    ksort($files);
 
     $file = reset($files);
     return \Drupal::service('twig_tweak.image_view_builder')->build($file, $style, $attributes, $responsive, $check_access);
