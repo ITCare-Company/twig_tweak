@@ -246,7 +246,7 @@ class TwigTweakExtension extends AbstractExtension {
       ->getStorage('file')
       ->loadByProperties([$selector_type => $selector]);
 
-    if (count($files) < 1) {
+    if (count($files) == 0) {
       return [];
     }
 
