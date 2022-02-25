@@ -324,7 +324,8 @@ class TwigTweakExtension extends AbstractExtension {
     if ($route = \Drupal::routeMatch()->getRouteObject()) {
       $title = \Drupal::service('title_resolver')->getTitle(\Drupal::request(), $route);
     }
-    $build['#markup'] = render($title);
+    $build['#markup'] = is_array($title) ?
+      \Drupal::service('renderer')->render($title) : $title;
     $build['#cache']['contexts'] = ['url'];
     return $build;
   }
@@ -503,7 +504,8 @@ class TwigTweakExtension extends AbstractExtension {
       return NULL;
     }
 
-    return file_url_transform_relative($image_style->buildUrl($path));
+    return \Drupal::service('file_url_generator')
+      ->transformRelative($image_style->buildUrl($path));
   }
 
   /**

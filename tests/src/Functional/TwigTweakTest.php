@@ -5,6 +5,7 @@ namespace Drupal\Tests\twig_tweak\Functional;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
+use Drupal\file\FileInterface;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\Tests\TestFileCreationTrait;
 use Drupal\file\Entity\File;
@@ -53,14 +54,14 @@ final class TwigTweakTest extends BrowserTestBase {
     $image_file = File::create([
       'uri' => $test_files[0]->uri,
       'uuid' => 'b2c22b6f-7bf8-4da4-9de5-316e93487518',
-      'status' => FILE_STATUS_PERMANENT,
+      'status' => FileInterface::STATUS_PERMANENT,
     ]);
     $image_file->save();
 
     $media_file = File::create([
       'uri' => $test_files[8]->uri,
       'uuid' => '5dd794d0-cb75-4130-9296-838aebc1fe74',
-      'status' => FILE_STATUS_PERMANENT,
+      'status' => FileInterface::STATUS_PERMANENT,
     ]);
     $media_file->save();
 
