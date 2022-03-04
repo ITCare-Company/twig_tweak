@@ -18,5 +18,12 @@
     },
     "suggest": {
         "symfony/var-dumper": "Better dump() function for debugging Twig variables"
+    },
+    "extra": {
+        "drush": {
+            "services": {
+                "drush.services.yml": "^9 || ^10 || ^11"
+            }
+        }
     }
 }
