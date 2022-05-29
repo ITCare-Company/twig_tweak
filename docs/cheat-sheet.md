@@ -168,12 +168,12 @@ See [rendering blocks with Twig Tweak](blocks.md#block-plugin) for details.
 ```twig
 {# Basic usage. #}
 <div class="contextual-region">
-  {{ drupal_contextual_links('entity.view.edit_form:view=frontpage&display_id=feed_1:') }}
+  {{ drupal_contextual_links('entity.view.edit_form:view=frontpage:display_id=feed_1') }}
   {{ drupal_view('frontpage') }}
 </div>
 {# Multiple links. #}
 <div class="contextual-region">
-  {{ drupal_contextual_links('node:node=123|block_content:block_content=123:') }}
+  {{ drupal_contextual_links('node:node=123:|block_content:block_content=123:') }}
   {{ content }}
 </div>
 ```
