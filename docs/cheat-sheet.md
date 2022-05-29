@@ -223,7 +223,7 @@ images when used in an `<img/>` tag.
 
 ## Format size
 ```twig
-{{ 12345|format_size() }}
+{{ 12345|format_size }}
 ```
 
 ## Truncate
