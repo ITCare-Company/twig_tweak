@@ -4,6 +4,10 @@
 ```twig
 {{ drupal_view('who_s_new', 'block_1') }}
 ```
+Specify additional parameters which map to contextual filters you have configured in your view:
+```twig
+{{ drupal_view('who_s_new', 'block_1', arg_1, arg_2, arg_3) }}
+```
 
 ## Drupal View Result
 ```twig
