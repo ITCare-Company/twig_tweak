@@ -54,7 +54,7 @@ abstract class AbstractExtractorTestCase extends KernelTestBase {
     $this->installEntitySchema('media');
 
     $test_files = $this->getTestFiles('image');
-    //
+
     $image_file = File::create([
       'uri' => $test_files[0]->uri,
       'uuid' => 'a2cb2b6f-7bf8-4da4-9de5-316e93487518',
