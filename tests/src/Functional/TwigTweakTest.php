@@ -26,7 +26,7 @@ final class TwigTweakTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'classy';
+  protected $defaultTheme = 'claro';
 
   /**
    * {@inheritdoc}
@@ -134,21 +134,20 @@ final class TwigTweakTest extends BrowserTestBase {
 
     // -- Block.
     $xpath = '//div[@class = "tt-block"]';
-    $xpath .= '/img[contains(@src, "/core/themes/classy/logo.svg") and @alt="Home"]';
+    $xpath .= '/img[contains(@src, "/core/themes/claro/logo.svg") and @alt="Home"]';
     $this->assertXpath($xpath);
 
     // -- Block with wrapper.
     $xpath = '//div[@class = "tt-block-with-wrapper"]';
     $xpath .= '/div[@class = "block block-system block-system-branding-block"]';
     $xpath .= '/h2[text() = "Branding"]';
-    $xpath .= '/following-sibling::a[img[contains(@src, "/core/themes/classy/logo.svg") and @alt="Home"]]';
+    $xpath .= '/following-sibling::a[img[contains(@src, "/core/themes/claro/logo.svg") and @alt="Home"]]';
     $xpath .= '/following-sibling::div[@class = "site-name"]/a';
     $this->assertXpath($xpath);
 
     // -- Region.
-    $xpath = '//div[@class = "tt-region"]/div[@class = "region region-sidebar-first"]';
-    $xpath .= '/div[contains(@class, "block-page-title-block") and h1[@class="page-title" and text() = "Twig Tweak Test"]]';
-    $xpath .= '/following-sibling::div[contains(@class, "block-system-powered-by-block")]/span[. = "Powered by Drupal"]';
+    $xpath = '//div[@class = "tt-region"]/div[@class = "region region-highlighted"]';
+    $xpath .= '/div[contains(@class, "block-system-powered-by-block")]/span[. = "Powered by Drupal"]';
     $this->assertXpath($xpath);
 
     // -- Entity (default view mode).
@@ -191,13 +190,13 @@ final class TwigTweakTest extends BrowserTestBase {
     // -- Entity add form.
     $xpath = '//div[@class = "tt-entity-add-form"]/form';
     $xpath .= '//input[@name = "title[0][value]" and @value = ""]';
-    $xpath .= '/../../../div/input[@type = "submit" and @value = "Save"]';
+    $xpath .= '/../../../../..//div/input[@type = "submit" and @value = "Save"]';
     $this->assertXpath($xpath);
 
     // -- Entity edit form.
     $xpath = '//div[@class = "tt-entity-edit-form"]/form';
     $xpath .= '//input[@name = "title[0][value]" and @value = "Alpha"]';
-    $xpath .= '/../../../div/input[@type = "submit" and @value = "Save"]';
+    $xpath .= '/../../../../..//div/input[@type = "submit" and @value = "Save"]';
     $this->assertXpath($xpath);
 
     // -- Field.
@@ -434,7 +433,7 @@ final class TwigTweakTest extends BrowserTestBase {
   }
 
   /**
-   * Checks that an element specified by a the xpath exists on the current page.
+   * Checks that an element specified by the xpath exists on the current page.
    */
   private function assertXpath(string $xpath): void {
     $this->assertSession()->elementExists('xpath', $xpath);
