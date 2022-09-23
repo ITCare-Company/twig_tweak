@@ -121,9 +121,14 @@ class BlockViewBuilder {
     if ($access->isAllowed()) {
       // Title block needs a special treatment.
       if ($block_plugin instanceof TitleBlockPluginInterface) {
-        $request = $this->requestStack->getCurrentRequest();
-        $title = $this->titleResolver->getTitle($request, $this->routeMatch->getRouteObject());
-        $block_plugin->setTitle($title);
+        // Account for the scenario that a NullRouteMatch is returned. This, for
+        // example, is the case when Search API is indexing the site during
+        // Drush cron.
+        if ($route = $this->routeMatch->getRouteObject()) {
+          $request = $this->requestStack->getCurrentRequest();
+          $title = $this->titleResolver->getTitle($request, $route);
+          $block_plugin->setTitle($title);
+        }
       }
 
       // Place the content returned by the block plugin into a 'content' child
