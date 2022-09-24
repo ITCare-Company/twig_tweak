@@ -183,7 +183,8 @@ class TwigTweakExtension extends AbstractExtension {
    */
   public static function drupalEntityForm(string $entity_type, ?string $id = NULL, string $form_mode = 'default', array $values = [], bool $check_access = TRUE): array {
     $entity_storage = \Drupal::entityTypeManager()->getStorage($entity_type);
-    $entity = $id ? $entity_storage->load($id) : $entity_storage->create($values);
+    $entity_repository = \Drupal::service('entity.repository');
+    $entity = $id ? $entity_repository->getActive($entity_type, $id) : $entity_storage->create($values);
     if ($entity) {
       return \Drupal::service('twig_tweak.entity_form_view_builder')
         ->build($entity, $form_mode, $check_access);
