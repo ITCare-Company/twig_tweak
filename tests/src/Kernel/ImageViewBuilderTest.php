@@ -4,9 +4,11 @@ namespace Drupal\Tests\twig_tweak\Kernel;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\DrupalKernel;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\responsive_image\Entity\ResponsiveImageStyle;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * A test for ImageViewBuilderTest.
@@ -34,6 +36,12 @@ final class ImageViewBuilderTest extends AbstractTestCase {
    */
   public function setUp(): void {
     parent::setUp();
+
+    // Add file_private_path setting.
+    $request = Request::create('/');
+    $site_path = DrupalKernel::findSitePath($request);
+    $this->setSetting('file_private_path', $site_path . '/private');
+
     $this->installEntitySchema('file');
     $this->installSchema('file', 'file_usage');
     ImageStyle::create(['name' => 'large'])->save();
