@@ -102,7 +102,7 @@ See [rendering blocks with Twig Tweak](blocks.md#block-plugin) for details.
 {# Render image using 'thumbnail' image style and custom attributes. #}
 {{ drupal_image('public://ocean.jpg', 'thumbnail', {alt: 'The alternative text'|t, title: 'The title text'|t}) }}
 
-{# Render responsive image. #}
+{# Render responsive image (using a named argument). #}
 {{ drupal_image('public://ocean.jpg', 'wide', responsive=true) }}
 ```
 
