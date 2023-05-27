@@ -226,6 +226,7 @@ images when used in an `<img/>` tag.
 ```
 
 ## Format size
+Generates a string representation for the given byte count.
 ```twig
 {{ 12345|format_size }}
 ```
