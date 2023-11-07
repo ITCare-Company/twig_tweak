@@ -265,7 +265,7 @@ Generates a string representation for the given byte count.
 ```
 
 ## With
-This is an opposite of core `without` filter.
+This is an opposite of core `without` filter and adds properties instead of removing it.
 ```twig
 {# Set top-level value. #}
 {{ content.field_image|with('#title', 'Photo'|t) }}
