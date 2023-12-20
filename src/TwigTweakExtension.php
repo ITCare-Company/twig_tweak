@@ -4,6 +4,7 @@ namespace Drupal\twig_tweak;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
@@ -352,6 +353,9 @@ class TwigTweakExtension extends AbstractExtension {
       if ($language = $language_manager->getLanguage($options['langcode'])) {
         $options['language'] = $language;
       }
+    }
+    if (UrlHelper::isExternal($user_input)) {
+      return  Url::fromUri($user_input, $options);
     }
     if (!in_array($user_input[0], ['/', '#', '?'])) {
       $user_input = '/' . $user_input;
