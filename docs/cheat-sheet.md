@@ -10,8 +10,11 @@ Specify additional parameters which map to contextual filters you have configure
 ```
 
 ## Drupal View Result
+Checks results for a given view. Note that the results themselves are not printable.
 ```twig
-{{ drupal_view_result('who_s_new', 'block_1') }}
+{% if drupal_view_result('cart')|length == 0 %}
+  {{ 'Your cart is empty.'|t }}
+{% endif %}
 ```
 
 ## Drupal Block
