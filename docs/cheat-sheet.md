@@ -114,6 +114,11 @@ options, which is documented here: https://api.drupal.org/api/drupal/core!lib!Dr
 {# Render image using 'thumbnail' image style and custom attributes. #}
 {{ drupal_image('public://ocean.jpg', 'thumbnail', {alt: 'The alternative text'|t, title: 'The title text'|t}) }}
 
+{# Render image using 'thumbnail' image style with lazy/eager loading (by attribute). #}
+{{ drupal_image('public://ocean.jpg', 'thumbnail', {loading: 'lazy'}) }}
+{{ drupal_image('public://ocean.jpg', 'thumbnail', {loading: 'eager'}) }}
+
+{# Render responsive image. #}
 {# Render responsive image (using a named argument). #}
 {{ drupal_image('public://ocean.jpg', 'wide', responsive=true) }}
 ```
