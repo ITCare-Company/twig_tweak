@@ -265,6 +265,11 @@ final class TwigTweakTest extends BrowserTestBase {
     $xpath = sprintf('//div[@class = "tt-url"]/div[@data-case="with-langcode" and text() = "%s"]', $url);
     $this->assertXpath($xpath);
 
+    // -- External URL.
+    $url = 'https://example.com/node?foo=bar&page=1#here';
+    $xpath = sprintf('//div[@class = "tt-url"]/div[@data-case="external" and text() = "%s"]', $url);
+    $this->assertXpath($xpath);
+
     // -- Link.
     $url = Url::fromUserInput('/node/1/edit', ['absolute' => TRUE]);
     $link = Link::fromTextAndUrl('Edit', $url)->toString();

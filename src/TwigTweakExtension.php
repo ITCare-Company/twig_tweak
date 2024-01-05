@@ -333,7 +333,7 @@ class TwigTweakExtension extends AbstractExtension {
   }
 
   /**
-   * Generates a URL from an internal path.
+   * Generates a URL from an internal or external path.
    *
    * @param string $user_input
    *   User input for a link or path.
@@ -355,7 +355,7 @@ class TwigTweakExtension extends AbstractExtension {
       }
     }
     if (UrlHelper::isExternal($user_input)) {
-      return  Url::fromUri($user_input, $options);
+      return Url::fromUri($user_input, $options);
     }
     if (!in_array($user_input[0], ['/', '#', '?'])) {
       $user_input = '/' . $user_input;

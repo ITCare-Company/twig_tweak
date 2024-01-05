@@ -54,6 +54,7 @@
   <div class="tt-url">
     <div data-case="default">{{ drupal_url('node/1', {absolute: true}) }}</div>
     <div data-case="with-langcode">{{ drupal_url('node/1', {absolute: true, langcode: 'ru'}) }}</div>
+    <div data-case="external">{{ drupal_url('https://example.com/node?foo=bar', {query: {page: 1}, fragment: 'here'}) }}</div>
   </div>
   <div class="tt-link">{{ drupal_link('Edit', 'node/1/edit', {absolute: true}) }}</div>
   <div class="tt-link-html">{% set link_text %}<b>Edit</b>{% endset %}{{ drupal_link(link_text, 'node/1/edit', {absolute: true}) }}</div>
