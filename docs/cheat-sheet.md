@@ -4,8 +4,8 @@
 ```twig
 {{ drupal_view('who_s_new', 'block_1') }}
 ```
-Specify additional parameters which map to contextual filters you have configured in your view:
 ```twig
+{# Specify additional parameters which map to contextual filters you have configured in your view. #}
 {{ drupal_view('who_s_new', 'block_1', arg_1, arg_2, arg_3) }}
 ```
 
@@ -121,7 +121,6 @@ options, which is documented here: https://api.drupal.org/api/drupal/core!lib!Dr
 {{ drupal_image('public://ocean.jpg', 'thumbnail', {loading: 'lazy'}) }}
 {{ drupal_image('public://ocean.jpg', 'thumbnail', {loading: 'eager'}) }}
 
-{# Render responsive image. #}
 {# Render responsive image (using a named argument). #}
 {{ drupal_image('public://ocean.jpg', 'wide', responsive=true) }}
 ```
