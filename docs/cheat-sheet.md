@@ -32,6 +32,9 @@ drush ev "print_r(array_keys(\Drupal::service('plugin.manager.block')->getDefini
 
 {# Bypass block.html.twig theming. #}
 {{ drupal_block('system_branding_block', wrapper=false) }}
+
+{# For block plugin that has a required context supply a context mapping to tell the block instance where to get that context from. #}
+{{ drupal_block('plugin_id', {context_mapping: {node: '@node.node_route_context:node'}}) }}
 ```
 
 See [rendering blocks with Twig Tweak](blocks.md#block-plugin) for details.
