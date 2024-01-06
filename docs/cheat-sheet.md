@@ -71,6 +71,7 @@ See [rendering blocks with Twig Tweak](blocks.md#block-plugin) for details.
 ```
 
 ## Drupal Field
+Note that drupal_field() does not work for view modes powered by Layout Builder.
 ```twig
 {# Render field_image from node 1 in view_mode "full" (default). #}
 {{ drupal_field('field_image', 'node', 1) }}
@@ -78,8 +79,8 @@ See [rendering blocks with Twig Tweak](blocks.md#block-plugin) for details.
 {# Render field_image from node 1 in view_mode "teaser". #}
 {{ drupal_field('field_image', 'node', 1, 'teaser') }}
 
-{# Render field_image from node 1 and instead of a view mode, provide an array of display
-options, which is documented here: https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Entity!EntityViewBuilderInterface.php/function/EntityViewBuilderInterface%3A%3AviewField #}
+{# Render field_image from node 1 and instead of a view mode, provide an array of display options. #}
+{# @see https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Entity!EntityViewBuilderInterface.php/function/EntityViewBuilderInterface%3A%3AviewField #}
 {{ drupal_field('field_image', 'node', 1, {type: 'image_url', settings: {image_style: 'large'}}) }}
 
 {# Render field_image from node 1 in view_mode "teaser" in English with access check disabled. #}
