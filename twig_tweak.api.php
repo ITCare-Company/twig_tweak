@@ -23,6 +23,7 @@ use Twig\TwigTest;
  *   Twig functions to alter.
  */
 function hook_twig_tweak_functions_alter(array &$functions): void {
+  // @phpcs:disable
   // A simple way to implement lazy loaded global variables.
   $callback = static fn (string $name): ?string =>
     match ($name) {
@@ -31,6 +32,7 @@ function hook_twig_tweak_functions_alter(array &$functions): void {
       default => NULL,
     };
   $functions[] = new TwigFunction('var', $callback);
+  // @phpcs:enable
 }
 
 /**

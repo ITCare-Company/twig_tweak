@@ -342,6 +342,14 @@ final class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-with-nested" and text() = "{alpha:{beta:{gamma:456}}}"]';
     $this->assertXpath($xpath);
 
+    // -- Data URI (SVG).
+    $xpath = '//div[@class = "tt-data-uri-svg"]/img[@src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iNTAiIGZpbGw9ImxpbWUiLz48L3N2Zz4="]';
+    $this->assertXpath($xpath);
+
+    // -- Data URI (Iframe).
+    $xpath = '//div[@class = "tt-data-uri-iframe"]/iframe[@src = "data:text/html;charset=UTF-8;base64,PGgxPkhlbGxvIHdvcmxkITwvaDE+"]';
+    $this->assertXpath($xpath);
+
     // -- 'children'.
     $xpath = '//div[@class = "tt-children" and text() = "doremi"]';
     $this->assertXpath($xpath);

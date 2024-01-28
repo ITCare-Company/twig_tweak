@@ -285,6 +285,15 @@ This is an opposite of core `without` filter and adds properties instead of remo
 {{ content|with(['field_image', '#title'], 'Photo'|t) }}
 ```
 
+## Data URI
+The filter generates a URL using the data scheme as defined in [RFC 2397](https://datatracker.ietf.org/doc/html/rfc2397)
+```twig
+{# Inline image. #}
+<img src="{{ '<svg xmlns="http://www.w3.org/2000/svg"><rect width="100" height="50" fill="lime"/></svg>'|data_uri('image/svg+xml') }}" alt="{{ 'Rectangle'|t }}"/>
+{# Image from file system. #}
+<img src="{{ source(directory ~ '/images/logo.svg')|data_uri('image/svg+xml') }}" alt="{{ 'Logo'|t }}"/>
+```
+
 ## Children
 ```twig
 <ul>
