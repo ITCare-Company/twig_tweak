@@ -4,12 +4,27 @@ namespace Drupal\twig_tweak\View;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Image\ImageFactory;
 use Drupal\file\FileInterface;
 
 /**
  * Image view builder.
  */
 class ImageViewBuilder {
+
+  /**
+   * The provider image factory.
+   *
+   * @var \Drupal\Core\Image\ImageFactory
+   */
+  protected $imageFactory;
+
+  /**
+   * Constructs an ImageViewBuilder object.
+   */
+  public function __construct(ImageFactory $imageFactory) {
+    $this->imageFactory = $imageFactory;
+  }
 
   /**
    * Builds an image.
@@ -37,6 +52,20 @@ class ImageViewBuilder {
       $build['#uri'] = $file->getFileUri();
       $build['#attributes'] = $attributes;
       if ($style) {
+        // If an image style is given, image module needs the original
+        // image dimensions to calculate image style's
+        // width and height and set the attributes.
+        // See https://www.drupal.org/project/twig_tweak/issues/3356042
+        $uri = $file->getFileUri();
+        $image = $this->imageFactory->get($uri);
+        if ($image->isValid()) {
+          $build['#width'] = $image->getWidth();
+          $build['#height'] = $image->getHeight();
+        }
+        else {
+          $build['#width'] = $build['#height'] = NULL;
+        }
+
         if ($responsive) {
           $build['#type'] = 'responsive_image';
           $build['#responsive_image_style_id'] = $style;

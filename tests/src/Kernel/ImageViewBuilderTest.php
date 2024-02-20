@@ -4,14 +4,14 @@ namespace Drupal\Tests\twig_tweak\Kernel;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\Core\DrupalKernel;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\responsive_image\Entity\ResponsiveImageStyle;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
- * A test for ImageViewBuilderTest.
+ * A test class for testing the image view builder.
  *
  * @group twig_tweak
  */
@@ -32,20 +32,109 @@ final class ImageViewBuilderTest extends AbstractTestCase {
   ];
 
   /**
+   * The ImageStyle.
+   *
+   * @var \Drupal\image\Entity\ImageStyle
+   */
+  protected $imageStyle;
+
+  /**
+   * The ResponsiveImageStyle.
+   *
+   * @var \Drupal\responsive_image\Entity\ResponsiveImageStyle
+   */
+  protected $responsiveImageStyle;
+
+  /**
+   * The public image uri.
+   *
+   * @var string
+   */
+  protected string $publicImageUri;
+
+  /**
+   * The private image uri.
+   *
+   * @var string
+   */
+  protected string $privateImageUri;
+
+  /**
+   * The public image file.
+   *
+   * @var \Drupal\file\FileInterface
+   */
+  protected $publicImage;
+
+  /**
+   * The private image file.
+   *
+   * @var \Drupal\file\FileInterface
+   */
+  protected $privateImage;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp(): void {
     parent::setUp();
 
-    // Add file_private_path setting.
-    $request = Request::create('/');
-    $site_path = DrupalKernel::findSitePath($request);
-    $this->setSetting('file_private_path', $site_path . '/private');
-
     $this->installEntitySchema('file');
     $this->installSchema('file', 'file_usage');
-    ImageStyle::create(['name' => 'large'])->save();
-    ResponsiveImageStyle::create(['id' => 'wide'])->save();
+
+    $fileSystemService = \Drupal::service('file_system');
+
+    $fileSystemService->prepareDirectory($this->siteDirectory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+    $privateFilesDirectory = $this->siteDirectory . '/private';
+    $fileSystemService->prepareDirectory($privateFilesDirectory, FileSystemInterface::CREATE_DIRECTORY);
+    $this->setSetting('file_private_path', $privateFilesDirectory);
+
+    $this->imageStyle = ImageStyle::create([
+      'name' => 'small',
+      'label' => 'Small',
+    ]);
+    $this->imageStyle->save();
+    // Add a crop effect:
+    $this->imageStyle->addImageEffect([
+      'id' => 'image_resize',
+      'data' => [
+        'width' => 10,
+        'height' => 10,
+      ],
+      'weight' => 0,
+    ]);
+    $this->imageStyle->save();
+
+    $this->responsiveImageStyle = ResponsiveImageStyle::create([
+      'id' => 'wide',
+      'label' => 'Wide',
+      'breakpoint_group' => 'twig_tweak_image_view_builder',
+      'fallback_image_style' => 'small',
+    ]);
+    $this->responsiveImageStyle->save();
+
+    // Create a copy of a test image file in root.
+    // Original sizes: 40x20px.
+    $this->publicImageUri = 'public://image-test-do.jpg';
+    $fileSystemService->copy('core/tests/fixtures/files/image-test.jpg', $this->publicImageUri, FileSystemInterface::EXISTS_REPLACE);
+    $this->assertFileExists($this->publicImageUri);
+    $this->publicImage = File::create([
+      'uri' => $this->publicImageUri,
+      'status' => FileInterface::STATUS_PERMANENT,
+    ]);
+    $this->publicImage->save();
+
+    // Create a copy of a test image file in root.
+    // Original sizes: 40x20px.
+    $this->privateImageUri = 'private://image-test-do.png';
+    $fileSystemService
+      ->copy('core/tests/fixtures/files/image-test.png', $this->privateImageUri, FileSystemInterface::EXISTS_REPLACE);
+    $this->assertFileExists($this->privateImageUri);
+    $this->privateImage = File::create([
+      'uri' => $this->privateImageUri,
+      'status' => FileInterface::STATUS_PERMANENT,
+    ]);
+    $this->privateImage->save();
   }
 
   /**
@@ -61,21 +150,20 @@ final class ImageViewBuilderTest extends AbstractTestCase {
    * Test callback.
    */
   public function testImageViewBuilder(): void {
-
     $view_builder = $this->container->get('twig_tweak.image_view_builder');
 
-    /** @var \Drupal\file\FileInterface $public_image */
-    $public_image = File::create(['uri' => 'public://ocean.jpg']);
-    $public_image->save();
-
-    /** @var \Drupal\file\FileInterface $private_image */
-    $private_image = File::create(['uri' => 'private://sea.jpg']);
-    $private_image->save();
+    $uri = $this->publicImage->getFileUri();
+    $image = \Drupal::service('image.factory')->get($uri);
+    $imageOriginalWidth = $image->getWidth();
+    $imageOriginalHeight = $image->getHeight();
+    self::assertTrue($image->isValid());
+    self::assertEquals(40, $imageOriginalWidth);
+    self::assertEquals(20, $imageOriginalHeight);
 
     // -- Without style.
-    $build = $view_builder->build($public_image);
+    $build = $view_builder->build($this->publicImage);
     $expected_build = [
-      '#uri' => 'public://ocean.jpg',
+      '#uri' => $this->publicImageUri,
       '#attributes' => [],
       '#theme' => 'image',
       '#cache' => [
@@ -85,21 +173,23 @@ final class ImageViewBuilderTest extends AbstractTestCase {
         ],
         'tags' => [
           'file:1',
-          'tag_for_public://ocean.jpg',
+          'tag_for_' . $this->publicImageUri,
         ],
         'max-age' => 70,
       ],
     ];
     self::assertRenderArray($expected_build, $build);
-    self::assertSame('<img src="/files/ocean.jpg" alt="" />', $this->renderPlain($build));
+    self::assertSame('<img src="/files/image-test-do.jpg" alt="" />', $this->renderPlain($build));
 
     // -- With style.
-    $build = $view_builder->build($public_image, 'large', ['alt' => 'Ocean']);
+    $build = $view_builder->build($this->publicImage, 'small', ['alt' => 'Image Test Do']);
     $expected_build = [
-      '#uri' => 'public://ocean.jpg',
-      '#attributes' => ['alt' => 'Ocean'],
+      '#uri' => $this->publicImageUri,
+      '#attributes' => ['alt' => 'Image Test Do'],
+      '#width' => $imageOriginalWidth,
+      '#height' => $imageOriginalHeight,
       '#theme' => 'image_style',
-      '#style_name' => 'large',
+      '#style_name' => 'small',
       '#cache' => [
         'contexts' => [
           'user',
@@ -107,19 +197,21 @@ final class ImageViewBuilderTest extends AbstractTestCase {
         ],
         'tags' => [
           'file:1',
-          'tag_for_public://ocean.jpg',
+          'tag_for_' . $this->publicImageUri,
         ],
         'max-age' => 70,
       ],
     ];
     self::assertRenderArray($expected_build, $build);
-    self::assertSame('<img alt="Ocean" src="/files/styles/large/public/ocean.jpg?itok=abc" />', $this->renderPlain($build));
+    self::assertSame('<img alt="Image Test Do" src="/files/styles/small/public/image-test-do.jpg?itok=abc" width="10" height="10" loading="lazy" />', $this->renderPlain($build));
 
     // -- With responsive style.
-    $build = $view_builder->build($public_image, 'wide', ['alt' => 'Ocean'], TRUE);
+    $build = $view_builder->build($this->publicImage, 'wide', ['alt' => 'Image Test Do'], TRUE);
     $expected_build = [
-      '#uri' => 'public://ocean.jpg',
-      '#attributes' => ['alt' => 'Ocean'],
+      '#uri' => $this->publicImageUri,
+      '#attributes' => ['alt' => 'Image Test Do'],
+      '#width' => $imageOriginalWidth,
+      '#height' => $imageOriginalHeight,
       '#type' => 'responsive_image',
       '#responsive_image_style_id' => 'wide',
       '#cache' => [
@@ -129,22 +221,22 @@ final class ImageViewBuilderTest extends AbstractTestCase {
         ],
         'tags' => [
           'file:1',
-          'tag_for_public://ocean.jpg',
+          'tag_for_' . $this->publicImageUri,
         ],
         'max-age' => 70,
       ],
     ];
     self::assertRenderArray($expected_build, $build);
-    self::assertSame('<picture><img src="/files/ocean.jpg" alt="Ocean" /></picture>', $this->renderPlain($build));
+    self::assertSame('<picture><img src="/files/styles/small/public/image-test-do.jpg?itok=abc" width="10" height="10" alt="Image Test Do" loading="lazy" /></picture>', $this->renderPlain($build));
 
     // -- Private image with access check.
-    $build = $view_builder->build($private_image);
+    $build = $view_builder->build($this->privateImage);
     $expected_build = [
       '#cache' => [
         'contexts' => ['user'],
         'tags' => [
           'file:2',
-          'tag_for_private://sea.jpg',
+          'tag_for_' . $this->privateImageUri,
         ],
         'max-age' => 70,
       ],
@@ -153,9 +245,9 @@ final class ImageViewBuilderTest extends AbstractTestCase {
     self::assertSame('', $this->renderPlain($build));
 
     // -- Private image without access check.
-    $build = $view_builder->build($private_image, NULL, [], FALSE, FALSE);
+    $build = $view_builder->build($this->privateImage, NULL, [], FALSE, FALSE);
     $expected_build = [
-      '#uri' => 'private://sea.jpg',
+      '#uri' => $this->privateImageUri,
       '#attributes' => [],
       '#theme' => 'image',
       '#cache' => [
@@ -165,7 +257,7 @@ final class ImageViewBuilderTest extends AbstractTestCase {
       ],
     ];
     self::assertRenderArray($expected_build, $build);
-    self::assertSame('<img src="/files/sea.jpg" alt="" />', $this->renderPlain($build));
+    self::assertSame('<img src="/files/image-test-do.png" alt="" />', $this->renderPlain($build));
   }
 
   /**
