@@ -32,28 +32,14 @@ final class ImageViewBuilderTest extends AbstractTestCase {
   ];
 
   /**
-   * The ImageStyle.
-   *
-   * @var \Drupal\image\Entity\ImageStyle
-   */
-  protected $imageStyle;
-
-  /**
-   * The ResponsiveImageStyle.
-   *
-   * @var \Drupal\responsive_image\Entity\ResponsiveImageStyle
-   */
-  protected $responsiveImageStyle;
-
-  /**
-   * The public image uri.
+   * The public image URI.
    *
    * @var string
    */
   protected string $publicImageUri;
 
   /**
-   * The private image uri.
+   * The private image URI.
    *
    * @var string
    */
@@ -82,20 +68,20 @@ final class ImageViewBuilderTest extends AbstractTestCase {
     $this->installEntitySchema('file');
     $this->installSchema('file', 'file_usage');
 
-    $fileSystemService = \Drupal::service('file_system');
+    $file_system = $this->container->get('file_system');
 
-    $fileSystemService->prepareDirectory($this->siteDirectory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
-    $privateFilesDirectory = $this->siteDirectory . '/private';
-    $fileSystemService->prepareDirectory($privateFilesDirectory, FileSystemInterface::CREATE_DIRECTORY);
-    $this->setSetting('file_private_path', $privateFilesDirectory);
+    $file_system->prepareDirectory($this->siteDirectory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+    $private_directory = $this->siteDirectory . '/private';
 
-    $this->imageStyle = ImageStyle::create([
+    $file_system->prepareDirectory($private_directory, FileSystemInterface::CREATE_DIRECTORY);
+    $this->setSetting('file_private_path', $private_directory);
+
+    $image_style = ImageStyle::create([
       'name' => 'small',
       'label' => 'Small',
     ]);
-    $this->imageStyle->save();
     // Add a crop effect:
-    $this->imageStyle->addImageEffect([
+    $image_style->addImageEffect([
       'id' => 'image_resize',
       'data' => [
         'width' => 10,
@@ -103,20 +89,19 @@ final class ImageViewBuilderTest extends AbstractTestCase {
       ],
       'weight' => 0,
     ]);
-    $this->imageStyle->save();
+    $image_style->save();
 
-    $this->responsiveImageStyle = ResponsiveImageStyle::create([
+    $responsive_image_style = ResponsiveImageStyle::create([
       'id' => 'wide',
       'label' => 'Wide',
       'breakpoint_group' => 'twig_tweak_image_view_builder',
       'fallback_image_style' => 'small',
     ]);
-    $this->responsiveImageStyle->save();
+    $responsive_image_style->save();
 
-    // Create a copy of a test image file in root.
-    // Original sizes: 40x20px.
+    // Create a copy of a test image file in root. Original sizes: 40x20px.
     $this->publicImageUri = 'public://image-test-do.jpg';
-    $fileSystemService->copy('core/tests/fixtures/files/image-test.jpg', $this->publicImageUri, FileSystemInterface::EXISTS_REPLACE);
+    $file_system->copy('core/tests/fixtures/files/image-test.jpg', $this->publicImageUri, FileSystemInterface::EXISTS_REPLACE);
     $this->assertFileExists($this->publicImageUri);
     $this->publicImage = File::create([
       'uri' => $this->publicImageUri,
@@ -124,11 +109,9 @@ final class ImageViewBuilderTest extends AbstractTestCase {
     ]);
     $this->publicImage->save();
 
-    // Create a copy of a test image file in root.
-    // Original sizes: 40x20px.
+    // Create a copy of a test image file in root. Original sizes: 40x20px.
     $this->privateImageUri = 'private://image-test-do.png';
-    $fileSystemService
-      ->copy('core/tests/fixtures/files/image-test.png', $this->privateImageUri, FileSystemInterface::EXISTS_REPLACE);
+    $file_system->copy('core/tests/fixtures/files/image-test.png', $this->privateImageUri, FileSystemInterface::EXISTS_REPLACE);
     $this->assertFileExists($this->privateImageUri);
     $this->privateImage = File::create([
       'uri' => $this->privateImageUri,
