@@ -159,6 +159,8 @@ Note that drupal_field() does not work for view modes powered by Layout Builder.
 
 ## Drupal URL
 ```twig
+{# The function accepts a valid internal path, such as "/node/1", "/taxonomy/term/1", a query string like "?query," or a fragment like "#anchor". #}
+
 {# Basic usage. #}
 {{ drupal_url('node/1') }}
 
