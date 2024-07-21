@@ -15,6 +15,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\StringTranslation\ByteSizeMarkup;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\image\Entity\ImageStyle;
@@ -106,7 +107,7 @@ class TwigTweakExtension extends AbstractExtension {
       new TwigFilter('image_style', [self::class, 'imageStyleFilter']),
       new TwigFilter('transliterate', [self::class, 'transliterateFilter']),
       new TwigFilter('check_markup', 'check_markup'),
-      new TwigFilter('format_size', 'format_size'),
+      new TwigFilter('format_size', [ByteSizeMarkup::class, 'create']),
       new TwigFilter('truncate', [Unicode::class, 'truncate']),
       new TwigFilter('view', [self::class, 'viewFilter']),
       new TwigFilter('with', [self::class, 'withFilter']),
