@@ -75,6 +75,7 @@ final class EntityFormViewBuilderTest extends AbstractTestCase {
         'user.roles:authenticated',
       ],
       'tags' => [
+        'CACHE_MISS_IF_UNCACHEABLE_HTTP_METHOD:form',
         'config:core.entity_form_display.node.article.default',
         'node:1',
         'tag_from_twig_tweak_test_node_access',
@@ -111,6 +112,7 @@ final class EntityFormViewBuilderTest extends AbstractTestCase {
         'user.roles:authenticated',
       ],
       'tags' => [
+        'CACHE_MISS_IF_UNCACHEABLE_HTTP_METHOD:form',
         'config:core.entity_form_display.node.article.default',
         'node:2',
       ],
