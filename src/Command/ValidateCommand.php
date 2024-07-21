@@ -16,11 +16,6 @@ final class ValidateCommand extends LintCommand {
   /**
    * {@inheritdoc}
    */
-  protected static $defaultName = 'twig-tweak:validate';
-
-  /**
-   * {@inheritdoc}
-   */
   protected function configure(): void {
 
     if (!\class_exists(Finder::class)) {
@@ -28,7 +23,7 @@ final class ValidateCommand extends LintCommand {
     }
 
     parent::configure();
-    $this->setName(self::$defaultName);
+    $this->setName('twig-tweak:validate');
     $this->setAliases(['twig-validate']);
     $this->setHelp(
       $this->getHelp() . <<< 'TEXT'
