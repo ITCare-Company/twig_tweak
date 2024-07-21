@@ -8,6 +8,8 @@ use Symfony\Component\Finder\Finder;
  * Implements twig-tweak:lint console command.
  *
  * @cspell:ignore friendsoftwig, twigcs
+ *
+ * @todo Remove this in 4.x.
  */
 final class ValidateCommand extends LintCommand {
 
@@ -26,6 +28,7 @@ final class ValidateCommand extends LintCommand {
     }
 
     parent::configure();
+    $this->setName(self::$defaultName);
     $this->setAliases(['twig-validate']);
     $this->setHelp(
       $this->getHelp() . <<< 'TEXT'
