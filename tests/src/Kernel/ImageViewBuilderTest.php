@@ -5,6 +5,7 @@ namespace Drupal\Tests\twig_tweak\Kernel;
 use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
@@ -102,7 +103,7 @@ final class ImageViewBuilderTest extends AbstractTestCase {
 
     // Create a copy of a test image file in root. Original sizes: 40x20px.
     $this->publicImageUri = 'public://image-test-do.jpg';
-    $file_system->copy('core/tests/fixtures/files/image-test.jpg', $this->publicImageUri, FileSystemInterface::EXISTS_REPLACE);
+    $file_system->copy('core/tests/fixtures/files/image-test.jpg', $this->publicImageUri, FileExists::Replace);
     $this->assertFileExists($this->publicImageUri);
     $this->publicImage = File::create([
       'uri' => $this->publicImageUri,
@@ -112,7 +113,7 @@ final class ImageViewBuilderTest extends AbstractTestCase {
 
     // Create a copy of a test image file in root. Original sizes: 40x20px.
     $this->privateImageUri = 'private://image-test-do.png';
-    $file_system->copy('core/tests/fixtures/files/image-test.png', $this->privateImageUri, FileSystemInterface::EXISTS_REPLACE);
+    $file_system->copy('core/tests/fixtures/files/image-test.png', $this->privateImageUri, FileExists::Replace);
     $this->assertFileExists($this->privateImageUri);
     $this->privateImage = File::create([
       'uri' => $this->privateImageUri,
