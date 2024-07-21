@@ -6,6 +6,8 @@ use Symfony\Component\Finder\Finder;
 
 /**
  * Implements twig-tweak:lint console command.
+ *
+ * @cspell:ignore friendsoftwig, twigcs
  */
 final class ValidateCommand extends LintCommand {
 

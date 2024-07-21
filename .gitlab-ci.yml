@@ -10,4 +10,4 @@ variables:
   OPT_IN_TEST_MAX_PHP: 1
   OPT_IN_TEST_NEXT_MINOR: 1
   OPT_IN_TEST_NEXT_MAJOR: 1
-  _CSPELL_WORDS: '"selfdoc" "Привет"'
+  _CSPELL_WORDS: '"selfdoc" "Привет" "sqlq" '

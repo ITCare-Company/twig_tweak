@@ -12,7 +12,7 @@
 // @codingStandardsIgnoreFile
 // This code is a literal copy of Symfony's LintCommand.
 // @see https://github.com/symfony/symfony/blob/5.x/src/Symfony/Bridge/Twig/Command/LintCommand.php
-// @cspell:ignore Weistroff Potencier
+// @cspell:ignore Weistroff Fabien Potencier
 namespace Drupal\twig_tweak\Command;
 
 use Symfony\Component\Console\Command\Command;
