@@ -212,7 +212,7 @@ final class ImageViewBuilderTest extends AbstractTestCase {
       ],
     ];
     self::assertRenderArray($expected_build, $build);
-    self::assertSame('<picture><img src="/files/styles/small/public/image-test-do.jpg?itok=abc" width="10" height="10" alt="Image Test Do" loading="lazy" /></picture>', $this->renderPlain($build));
+    self::assertSame('<picture><img width="10" height="10" src="/files/styles/small/public/image-test-do.jpg?itok=abc" alt="Image Test Do" loading="lazy" /></picture>', $this->renderPlain($build));
 
     // -- Private image with access check.
     $build = $view_builder->build($this->privateImage);
