@@ -167,7 +167,7 @@ final class BlockViewBuilderTest extends KernelTestBase {
   private function renderPlain(array $build): string {
     /** @var \Drupal\Core\Render\RendererInterface $renderer */
     $renderer = $this->container->get('renderer');
-    $content =  (string) DeprecationHelper::backwardsCompatibleCall(
+    $content = (string) DeprecationHelper::backwardsCompatibleCall(
       \Drupal::VERSION, '10.3.0',
       fn () => $renderer->renderInIsolation($build),
       fn () => $renderer->renderPlain($build),
