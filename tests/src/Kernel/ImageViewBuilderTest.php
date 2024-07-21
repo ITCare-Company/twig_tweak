@@ -136,9 +136,10 @@ final class ImageViewBuilderTest extends AbstractTestCase {
    */
   public function testImageViewBuilder(): void {
     // @todo Remove this once we drop support for Drupal 10.
-    if (version_compare(\Drupal::VERSION, '11.0.0-dev', '<')) {
+    if (version_compare(\Drupal::VERSION, '11.0.dev', '<')) {
       self::markTestSkipped();
     }
+
     $view_builder = $this->container->get('twig_tweak.image_view_builder');
 
     $uri = $this->publicImage->getFileUri();
