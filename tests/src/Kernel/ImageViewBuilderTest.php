@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\twig_tweak\Kernel;
 
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\File\FileSystemInterface;
@@ -247,7 +248,13 @@ final class ImageViewBuilderTest extends AbstractTestCase {
    * Renders a render array.
    */
   private function renderPlain(array $build): string {
-    $html = $this->container->get('renderer')->renderPlain($build);
+    /** @var \Drupal\Core\Render\RendererInterface $renderer */
+    $renderer = $this->container->get('renderer');
+    $html = DeprecationHelper::backwardsCompatibleCall(
+      \Drupal::VERSION, '10.3.0',
+      fn () => $renderer->renderInIsolation($build),
+      fn () => $renderer->renderPlain($build),
+    );
     $html = preg_replace('#src=".+/files/#s', 'src="/files/', $html);
     $html = preg_replace('#\?itok=.+?"#', '?itok=abc"', $html);
     $html = preg_replace(['#\s{2,}#', '#\n#'], '', $html);
