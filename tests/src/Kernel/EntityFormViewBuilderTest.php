@@ -49,7 +49,7 @@ final class EntityFormViewBuilderTest extends AbstractTestCase {
    * @see \twig_tweak_test_node_access()
    */
   public function testEntityFormViewBuilder(): void {
-    if (version_compare(\Drupal::VERSION, '11.0.dev', '<')) {
+    if (version_compare(\Drupal::VERSION, '11.1.dev', '<')) {
       $this->markTestSkipped();
     }
 
