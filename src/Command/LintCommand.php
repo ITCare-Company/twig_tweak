@@ -49,7 +49,7 @@ abstract class LintCommand extends Command
         $this->twig = $twig;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Lints a template and outputs encountered errors')
